@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>FoundWorkingCopyPaths</key>
+	<array>
+		<string>/Users/stefg/Documents/Visuals/00_oF/of_v0.8.1_osx_release/addons/ofxFft</string>
+		<string>/Users/stefg/Documents/Visuals/00_oF/of_v0.8.1_osx_release/addons/ofxLibsndfileRecorder</string>
+	</array>
+	<key>LastWorkingCopyScanDate</key>
+	<date>2014-05-06T21:03:07Z</date>
+	<key>MissingFilePaths</key>
+	<array>
+		<string>/Users/stefg/Documents/Visuals/00_oF/of_v0.8.1_osx_release/apps/myApps/testRecorder/bin/testRecorderDebug.app</string>
+	</array>
+	<key>Version</key>
+	<integer>4</integer>
+</dict>
+</plist>
