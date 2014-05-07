@@ -26,6 +26,8 @@ class ofApp : public ofBaseApp {
         bool recording, playing;
     
         int position;
+    
+        string filename;
 
 		ofTrueTypeFont font;
 		ofxOscReceiver receiver;

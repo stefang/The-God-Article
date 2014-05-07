@@ -103,13 +103,14 @@ void ofApp::draw(){
 	ofDrawBitmapString("PRESS s to stop recording",20,40);
 	ofDrawBitmapString("PRESS d to restart playback",20,60);
 	ofDrawBitmapString("PRESS f to view live data",20,80);
+	ofDrawBitmapString("PRESS g to load last data",20,100);
     if(recording){
 		ofSetCircleResolution(50);
-		ofDrawBitmapString("RECORDING = TRUE",20,100);
+		ofDrawBitmapString("RECORDING = TRUE",20,120);
 		ofSetColor(255,0,0);
 		ofCircle(165,76,6);
 	} else {
-		ofDrawBitmapString("RECORDING = FALSE",20,100);
+		ofDrawBitmapString("RECORDING = FALSE",20,120);
     }
 }
 
@@ -126,23 +127,24 @@ void ofApp::keyPressed(int key){
 		cout<<"Stop recording\n";
 		recording=false;
         cout << record.size() << endl;
-//        cout<<"Saving recording file\n";
-//        string filename = "data-";
-//        filename += ofToString(ofGetSystemTimeMicros());
-//        filename += ".txt";
-//        ofFile newFile(ofToDataPath(filename), ofFile::WriteOnly);
-//        newFile.create();
-//        for (int i = 0; i < values.size(); i++) {
-//            lines[i].clear();
-//            for (int h = 0; h < record.size(); h++) {
-//                newFile << history[h][i];
-//                if (h < record.size()-1 ) {
-//                    newFile << ",";
-//                }
-//            }
-//            newFile << endl;
-//        }
-//        newFile.close();
+        cout<<"Saving recording file\n";
+        filename = "data-";
+        filename += ofToString(ofGetSystemTimeMicros());
+        filename += ".txt";
+        cout << "record::size " << record.size() << endl;
+        ofFile newFile(ofToDataPath(filename), ofFile::WriteOnly);
+        newFile.create();
+        for (int h = 0; h < record.size(); h++) {
+            for (int i = 0; i < values.size(); i++) {
+                lines[i].clear();
+                newFile << history[h][i];
+                if (h < record.size()-1 ) {
+                    newFile << ",";
+                }
+            }
+            newFile << endl;
+        }
+        newFile.close();
 		playing=true;
         position = 0;
         history.clear();
@@ -157,6 +159,23 @@ void ofApp::keyPressed(int key){
         history.clear();
 		recording=false;
 		playing=false;
+    }
+    if (key=='g' && !recording) {
+        history.clear();
+//        record.clear();
+//        string fileContents = ofBufferFromFile(ofToDataPath(filename));
+//        vector<string> lines = ofSplitString(fileContents, "\n");
+//        for (int l = 0; l < lines.size(); l++) {
+//            vector<string> vals = ofSplitString(lines[l], ",");
+//            vector<float> valsf;
+//            for (int v = 0; v < vals.size(); v++) {
+//                valsf.push_back(ofToFloat(vals[v]));
+//            }
+//            record.push_back(valsf);
+//        }
+        position = 0;
+        recording=false;
+        playing=true;
     }
 }
 
