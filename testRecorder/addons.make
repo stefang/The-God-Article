@@ -1,4 +1,0 @@
-ofxGui
-ofxXmlSettings
-ofxFft
-ofxLibsndfileRecorder
