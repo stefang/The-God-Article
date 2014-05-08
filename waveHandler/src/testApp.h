@@ -5,7 +5,8 @@
 
 #define NUM_CHANNELS 1
 #define SAMPLE_RATE 44100
-#define BUFFER_SIZE 1024
+#define STREAM_BUFFER_SIZE 1024
+#define WAVEBUFFER_MINSEC 60
 
 class testApp : public ofBaseApp{
 
@@ -28,6 +29,6 @@ class testApp : public ofBaseApp{
 		void audioIn(float * input, int bufferSize, int nChannels); 		
 		ofSoundStream	soundStream;
 		ofxWaveHandler* waveObject;
-		bool			recording;    
-		int				actSlot, waveStart,waveLength;
+		bool			isRecording;    
+		int				actSlot, waveStart,waveLength, meshDetail;
 };
