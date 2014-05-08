@@ -7,7 +7,13 @@ void testApp::setup(){
 	actSlot = 0;
 
 	soundStream.listDevices();
+	
+	// you can change the deviceID to 0 if you only have one soundcard... 
+	// I have to use 1 because 0 is the integrated soundboard and 1 is my USB card... 
+	// Check the console for the deviceIDs...
 	soundStream.setDeviceID(1);
+
+
 	soundStream.setup(this, 0, NUM_CHANNELS, SAMPLE_RATE, BUFFER_SIZE, 4);
 
 	waveObject = new ofxWaveHandler(&soundStream, ofGetWidth()-30, 400);
