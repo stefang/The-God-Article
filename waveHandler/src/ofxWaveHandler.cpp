@@ -24,6 +24,7 @@ int ofxWaveHandler::loadBuffer(string fileName, unsigned int startSmpl) {
 		cout << "!> The buffer is still blocked (loadBuffer)!\n";
 		return -1;
 	}
+
 	isBlocked = true;
 	SndfileHandle	*oFile;
 	oFile=new SndfileHandle(ofToDataPath(fileName,true));
@@ -36,7 +37,7 @@ int ofxWaveHandler::loadBuffer(string fileName, unsigned int startSmpl) {
 	// if startSmpl <> 0 then concatenate the file from startSmpl
 	recPointer = (startSmpl+oFile->frames())*oFile->channels();
 	if (recPointer > recBufferMin) recBuffer=(float*)realloc(recBuffer, recPointer*sizeof(float));
-	oFile->readf(recBuffer+startSmpl, oFile->frames());
+	oFile->readf(recBuffer+(startSmpl*soundStream->getNumInputChannels()), oFile->frames());
 	sf_close(oFile->takeOwnership());
 	delete oFile;
 	isBlocked = false;
