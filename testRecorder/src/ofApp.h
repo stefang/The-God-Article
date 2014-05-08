@@ -1,8 +1,10 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxOsc.h"
 #include "ofxLibsndFileRecorder.h"
 #include "Waveform.h"
+#include "Fingers.h"
 
 #define NUM_CHANNELS 1
 #define SAMPLE_RATE 44100

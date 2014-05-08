@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #################
 ## Eclipse
 #################
@@ -213,3 +214,10 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+=======
+*.DS_Store
+*Derived*
+*bin*
+*xcuserdata*
+*xcshareddata*
+>>>>>>> 922674d71205ab6942473b9b583e9ba4427fdd09
