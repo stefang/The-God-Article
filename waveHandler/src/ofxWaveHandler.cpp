@@ -82,7 +82,6 @@ int ofxWaveHandler::clearBuffer() {
 	}
 	isBlocked = true;
 
-	cout << "deleted seconds: " << recPointer/(soundStream->getNumInputChannels()*soundStream->getSampleRate()) << "\n";
 	if(recBuffer!=NULL) {
 		free(recBuffer);
 		recBuffer=NULL;
@@ -107,9 +106,6 @@ void ofxWaveHandler::updateWaveBuffer() {
 	
 	if (recBuffer == NULL || isBlocked) {
 		waveForm.end();
-		if(isBlocked) {
-			cout << "ezegyblokkk - ";
-		}
 		return;
 	}
 	isBlocked = true;
