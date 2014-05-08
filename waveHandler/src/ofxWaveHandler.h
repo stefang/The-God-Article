@@ -13,7 +13,7 @@ class ofxWaveHandler {
 		void addSamples(float* input, int numSamples);
 		int clearBuffer();
 		void drawWaveBuffer(float xPos=0, float yPos=0);
-		void updateWaveBuffer();
+		void updateWaveBuffer(unsigned int startSmpl=0, int length=0);
 		int getBufferLengthSmpls();
 		float getBufferLengthSec();
 		int loadBuffer(string fileName, unsigned int startSmpl=0);

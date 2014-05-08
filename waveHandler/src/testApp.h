@@ -29,5 +29,5 @@ class testApp : public ofBaseApp{
 		ofSoundStream	soundStream;
 		ofxWaveHandler* waveObject;
 		bool			recording;    
-		int				actSlot;
+		int				actSlot, waveStart,waveLength;
 };

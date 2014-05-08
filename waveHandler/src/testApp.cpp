@@ -8,6 +8,8 @@ void testApp::setup(){
 	// in the ofxWaveHandler we only have one buffer, so if we press 0-9, then it will load an audio file 00.wav-09.wav
 	// to its buffer. If there is no audio file with tha name, then it will just clear the actual buffer.
 	actSlot = 0;
+	waveStart = 0;
+	waveLength = 0;
 
 	// when it's true the incoming audio will be appended to the current buffer...
 	recording=false;
@@ -40,7 +42,9 @@ void testApp::exit(){
 //--------------------------------------------------------------
 void testApp::update(){
 	// updating the FBO every fram from the actual audio buffer...
-	waveObject->updateWaveBuffer();
+	// there is a 2 parameters version, where you can define a window to be drawn with a start sample and length in samples...
+	// updateWaveBuffer(unsigned int startSmpl, int length)
+	waveObject->updateWaveBuffer(waveStart, waveLength);
 }
 
 //--------------------------------------------------------------
@@ -51,25 +55,24 @@ void testApp::draw(){
 	ofDrawBitmapString("PRESS S to save actual slot as in a file...",20,40);
 	ofDrawBitmapString("PRESS C to clear actual slot...",20,60);
 	ofDrawBitmapString("PRESS 0-9 to select new slot and load sample if there were any saved...",20,80);
+	ofDrawBitmapString("PRESS K/L to set the drawn wave's starting position...",20,100);
+	ofDrawBitmapString("PRESS M/N to set the drawn wave's length...",20,120);
 
 	// without parameters it will drow the fbo to (0,0):
 	// waveObject->drawWaveBuffer();
 	waveObject->drawWaveBuffer(15,255);
 
 	ofDrawBitmapString("SLOT: "+ofToString(actSlot),25,275);
-	ofDrawBitmapString("Current buffer size in samples... "+ofToString(waveObject->getBufferLengthSmpls()),25,620);
-	ofDrawBitmapString("Current buffer size in seconds... "+ofToString(waveObject->getBufferLengthSec(),2),25,640);
+	ofDrawBitmapString("Current buffer size in samples... "+ofToString(waveObject->getBufferLengthSmpls()),25,580);
+	ofDrawBitmapString("Current buffer size in seconds... "+ofToString(waveObject->getBufferLengthSec(),2),25,600);
+	ofDrawBitmapString("Wave starting sample... "+ofToString(waveStart),25,620);
+	ofDrawBitmapString("Wave length  (0 = full)... "+ofToString(waveLength),25,640);
 
-	ofSetColor(20,20,20);
 	if(recording){
 		ofSetCircleResolution(50);
-		ofDrawBitmapString("RECORDING = TRUE",20,100);
 		ofSetColor(255,0,0);
-		ofCircle(45,180,30);
-	} else {
-		ofDrawBitmapString("RECORDING = FALSE",20,100);
-	}	
-	
+		ofCircle(ofGetWidth()/2,500,30);
+	} 		
 }
 
 //--------------------------------------------------------------
@@ -120,6 +123,18 @@ void testApp::keyPressed(int key){
 		// this just clears the actual buffer
 		// retun value >> -1=ERROR / 0 = OK
 		waveObject->clearBuffer();
+	}
+	if (key=='k') {
+		waveStart +=22050;
+	}
+	if (key=='l') {
+		waveStart= max(0,waveStart-44100);
+	}
+	if (key=='n') {
+		waveLength +=11025;
+	}
+	if (key=='m') {
+		waveLength= max(0,waveLength-11025);
 	}
 }
 

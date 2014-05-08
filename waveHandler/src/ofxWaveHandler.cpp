@@ -99,7 +99,7 @@ void ofxWaveHandler::addSamples(float* input, int numSamples){
 	}
 }
 
-void ofxWaveHandler::updateWaveBuffer() {
+void ofxWaveHandler::updateWaveBuffer(unsigned int startSmpl, int length) {
 	waveForm.begin();
     ofSetColor(150,150,150);
 	ofRect(0, 0, waveFormWidth, waveFormHeight);
@@ -112,10 +112,16 @@ void ofxWaveHandler::updateWaveBuffer() {
     ofSetColor(255,255,255);
     
 	int channels = soundStream->getNumInputChannels();
-    float per = (recPointer/channels) / waveFormWidth;
+	
+	// calculate and constraint the start and end point of the buffer to draw...
+	if (length==0) length = (recPointer/channels);
+	if (startSmpl*channels >= recPointer) startSmpl=recPointer-channels;
+	if ((startSmpl+length)*channels>recPointer) length = (recPointer/channels)-startSmpl;
+
+    float per = length / waveFormWidth;
 
     for (int i = 0; i < waveFormWidth; i++) {
-        float h = ((recBuffer[int(i*per)*channels] * waveFormHeight)*0.5);
+        float h = ((recBuffer[int((i*per)+startSmpl)*channels] * waveFormHeight)*0.5);
         ofRect(i, waveFormHeight/2 - h, 1, h);
 	}
     waveForm.end();
