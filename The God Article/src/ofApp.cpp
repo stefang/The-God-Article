@@ -33,11 +33,12 @@ void ofApp::draw(){
 	ofDrawBitmapString("PRESS M/N to set the drawn wave's length...",20,120);
 	ofDrawBitmapString("PRESS G/H to set the mesh detail...",20,140);
     
-//	// without parameters it will draw the fbo to (0,0):
-//	// waveObject->drawWaveBuffer();
 	waveObject->drawWaveBuffer(15,255);
-//	// parameters can translate the mesh
-//	waveObject->drawWaveMesh(0,0);
+    
+    if (isPlaying) {
+        float playDiv = ((float)ofGetWidth()-30) / waveObject->getBufferLengthSmpls();
+        ofRect((playPosition * playDiv) + 15, 255, 3, 400);
+    }
     
 	ofDrawBitmapString("SLOT: "+ofToString(currentSlot),25,275);
 	ofDrawBitmapString("Current buffer size in samples... "+ofToString(waveObject->getBufferLengthSmpls()),25,560);
@@ -77,18 +78,6 @@ void ofApp::keyPressed(int key){
 	if (key=='s') {
 		string currentRecording=ofToString(currentSlot,2,'0')+".wav";
 		cout<<"Saving: " << currentRecording << "\n";
-        
-		// FORMAT EXAMPLES:
-		// SF_FORMAT_AIFF | SF_FORMAT_PCM_16;
-		// SF_FORMAT_RAW | SF_FORMAT_PCM_16;
-		// SF_FORMAT_AU | SF_FORMAT_FLOAT;
-		// (see sndfile.h for more information)
-        
-		// you can use the saveBuffer method with 2 parameters only, then it will save the whole buffer
-		// int saveBuffer(string fileName, int audioFormat= SF_FORMAT_WAV|SF_FORMAT_PCM_16)
-		// retun value >> -1=ERROR / 0 = OK
-		// if you use the four parameter version, the last 2 numbers are the starting and ending sample number to save from the buffer
-		// if both is 0, then it will save the whole buffer.
 		waveObject->saveBuffer(currentRecording, SF_FORMAT_WAV | SF_FORMAT_PCM_16, 0, 0);
 	}
 	if (key==' '){
@@ -104,21 +93,13 @@ void ofApp::keyPressed(int key){
         
 	}
 	if (key>='0' && key <= '9') {
+        isRecording = false;
+        isPlaying = false;
 		currentSlot = key-'0';
 		string fileNameToLoad="0"+ofToString(currentSlot)+string(".wav");
-        
-		// here you can overwrite the buffer in memory from a file... if you use a second argument that gives an offset where to start
-		// filling up the buffer (and extending if necessary)... If no second argument, then the starting sample = 0, so fully overwrite the buffer.
-		//
-		// this code will append a file to the end of the current buffer:
-		// waveObject->loadBuffer(fileNameToLoad, waveObject->getBufferLengthSmpls());
-		//
-		// retun value >> -1=ERROR / 0 = OK
 		waveObject->loadBuffer(fileNameToLoad);
 	}
 	if (key=='c') {
-		// this just clears the actual buffer
-		// retun value >> -1=ERROR / 0 = OK
 		waveObject->clearBuffer();
 	}
 	if (key=='k') {
