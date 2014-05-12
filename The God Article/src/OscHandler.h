@@ -21,12 +21,17 @@ class oscHandler
     ~oscHandler();
     
     void update();
-    void draw();
     void setSlot(int slot);
+    void drawOSCBuffer(int x = 0, int y = 0);
+    void updateOSCBuffer();
+
     int loadBuffer(string fileName);
     int saveBuffer(string fileName);
     
     int currentSlot;
+    
+    ofFbo oscDisplay;
+    int width, height;
     
     ofxOscReceiver* receiver;
     vector<float> values;

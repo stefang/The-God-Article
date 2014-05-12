@@ -8,11 +8,19 @@
 
 #include "oscHandler.h"
 
-oscHandler::oscHandler(ofxOscReceiver* rec, int width, int height) {
+oscHandler::oscHandler(ofxOscReceiver* rec, int w, int h) {
     receiver = rec;
+    
+    width = w;
+    height = h;
+    
+    oscDisplay.allocate(width, height);
+    
     for (int i = 0; i < 8; i++) {
         values.push_back(0.0f);
         adjustments.push_back(0.0f);
+        ofPolyline cur;
+        lines.push_back(cur);
     }
 }
 
@@ -69,9 +77,36 @@ void oscHandler::update() {
             adjustments[7] = m.getArgAsFloat(0);
         }
     }
+    
+    buffer.push_back(values);
+    
 }
 
-void oscHandler::draw() {
+void oscHandler::updateOSCBuffer() {
+    
+    float step = width / values.size();
+
+    for (int i = 0; i < values.size(); i++) {
+        lines[i].clear();
+        for (int h = 0; h < buffer.size(); h++) {
+            lines[i].addVertex(ofPoint(h*step, buffer[h][i] * 30));
+        }
+    }
+    
+    oscDisplay.begin();
+    ofBackground(255);
+    ofSetColor(0);
+    ofPushMatrix();
+    for (int i = 0; i < values.size(); i++) {
+        ofTranslate(0,20);
+        lines[i].draw();
+    }
+    ofPopMatrix();
+    oscDisplay.end();
+}
+
+void oscHandler::drawOSCBuffer(int x, int y) {
+    oscDisplay.draw(x, y);
 }
 
 void oscHandler::setSlot(int slot) {
@@ -79,7 +114,7 @@ void oscHandler::setSlot(int slot) {
 }
 
 int oscHandler::loadBuffer(string fileName) {
-
+    buffer.clear();
 }
 
 int oscHandler::saveBuffer(string fileName){

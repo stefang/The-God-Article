@@ -12,54 +12,52 @@ void ofApp::setup(){
     soundStream.listDevices();
     soundStream.setDeviceID(4);
     soundStream.setup(this, NUM_CHANNELS, NUM_CHANNELS, SAMPLE_RATE, STREAM_BUFFER_SIZE, 4);
-    waveObject = new ofxWaveHandler(&soundStream, WAVEBUFFER_MINSEC, ofGetWidth()-30, 400, 100);
-    
+    waveObject = new ofxWaveHandler(&soundStream, WAVEBUFFER_MINSEC, (ofGetWidth()-30) * 2, 400, ofGetWidth()-30, 100);
+
     receiver.setup(PORT);
-    oscObject = new oscHandler(&receiver, ofGetWidth()-30, 400);
+    oscObject = new oscHandler(&receiver, (ofGetWidth()-30) * 2, 400);
     
     ofEnableAlphaBlending();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    waveObject->updateWaveBuffer(waveStart, waveLength);
-    waveObject->updateOverviewBuffer();
-    oscObject->update();
+    if (isRecording) {
+        oscObject->update();
+        waveObject->updateOverviewBuffer();
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofBackground(255,255, 255);
 	ofSetColor(20,20,20, 255);
-	ofDrawBitmapString("PRESS SPACE to start/pause recording to the end of the actual slot...",20,20);
-	ofDrawBitmapString("PRESS S to save current slot as in a file...",20,40);
-	ofDrawBitmapString("PRESS C to clear current slot...",20,60);
-	ofDrawBitmapString("PRESS 0-9 to select new slot and load sample if there were any saved...",20,80);
-	ofDrawBitmapString("PRESS K/L to set the drawn wave's starting position...",20,100);
-	ofDrawBitmapString("PRESS M/N to set the drawn wave's length...",20,120);
+	ofDrawBitmapString("PRESS P to play back the current slot from 0...",20,20);
+	ofDrawBitmapString("PRESS O to start/stop playback...",20,40);
+	ofDrawBitmapString("PRESS SPACE to start/pause recording to the end of the current slot...",20,60);
+	ofDrawBitmapString("PRESS S to save current slot as in a file...",20,80);
+	ofDrawBitmapString("PRESS C to clear current slot...",20,100);
+	ofDrawBitmapString("PRESS 0-9 to select new slot and load sample if there were any saved...",20,120);
     
-	waveObject->drawWaveBuffer(15,255);
 	waveObject->drawOverviewBuffer(15,655);
     
+    int offset = (ofGetWidth() * 0.5) - (playPosition * ((float)(ofGetWidth()-30) * 2) / (float)waveObject->getBufferLengthSmpls());
+    waveObject->drawWaveBuffer(offset, 250);
+    // ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
+    oscObject->drawOSCBuffer(offset, 10);
+    // ofDisableBlendMode();
+
     if (isPlaying) {
-        float playDiv = ((float)ofGetWidth()-30) / (float)(waveCurrent);
-        ofRect((playPosition * playDiv) - ((float)waveStart * playDiv) + 15, 255, 3, 395);
-        playDiv = ((float)ofGetWidth()-30) / (float)waveObject->getBufferLengthSmpls();
-        ofRect((playPosition * playDiv) + 15, 655, 3, 95);
-        float sectionDiv = ((float)ofGetWidth()-30) / (float)waveObject->getBufferLengthSmpls();
-        ofSetColor(255,255,0,50);
-        ofRect((waveStart * sectionDiv) + 15, 655, (float)(waveCurrent) * sectionDiv, 100);
+        ofSetColor(100, 100);
+        ofRect(ofGetWidth() * 0.5, 250, 5, 400);
+        float playDiv = ((float)ofGetWidth()-30) / (float)waveObject->getBufferLengthSmpls();
+        ofRect((playPosition * playDiv) + 15, 655, 3, 100);
     }
     
     ofSetColor(255,255,255,255);
 
-    oscObject->draw();
  
 	ofDrawBitmapString("SLOT: "+ofToString(currentSlot),25,275);
-	ofDrawBitmapString("Current buffer size in samples... "+ofToString(waveObject->getBufferLengthSmpls()),25,560);
-	ofDrawBitmapString("Current buffer size in seconds... "+ofToString(waveObject->getBufferLengthSec(),2),25,580);
-	ofDrawBitmapString("Wave starting sample... "+ofToString(waveStart),25,600);
-	ofDrawBitmapString("Wave length (0 = full)... "+ofToString(waveLength),25,620);
     
 	if(isRecording){
 		ofSetCircleResolution(50);
@@ -82,12 +80,8 @@ void ofApp::audioOut (float* output, int bufferSize, int nChannels){
         for (int i = 0; i < bufferSize; i++){
             output[i*nChannels    ] = waveObject->getSample(playPosition);
             playPosition++;
-            waveCurrent = waveLength;
-            if (waveCurrent == 0 || waveCurrent > waveObject->getBufferLengthSmpls()) {
-                waveCurrent = waveObject->getBufferLengthSmpls();
-            }
-            if (playPosition > waveCurrent + waveStart) {
-                playPosition = waveStart;
+            if (playPosition > waveObject->getBufferLengthSmpls()) {
+                playPosition = 0;
             }
         }
     }
@@ -106,6 +100,9 @@ void ofApp::keyPressed(int key){
 		if(isRecording) {
 			cout<<"Stop recording...\n";
 			isRecording = false;
+            waveObject->updateWaveBuffer(0, waveObject->getBufferLengthSmpls());
+            waveObject->updateOverviewBuffer();
+            oscObject->updateOSCBuffer();
 		}
 		else {
 			cout<<"Start recording...\n";
@@ -122,33 +119,24 @@ void ofApp::keyPressed(int key){
 		string dataNameToLoad="0"+ofToString(currentSlot)+string(".txt");
 		waveObject->loadBuffer(fileNameToLoad);
 		oscObject->loadBuffer(dataNameToLoad);
-        waveStart = 0;
-        waveLength = 0;
+        waveObject->updateWaveBuffer(0, waveObject->getBufferLengthSmpls());
+        waveObject->updateOverviewBuffer();
+        playPosition = 0;
 	}
 	if (key=='c') {
 		waveObject->clearBuffer();
-	}
-	if (key=='k') {
-		waveStart= min(waveObject->getBufferLengthSmpls(),waveStart+11025);
-	}
-	if (key=='l') {
-		waveStart= max(0,waveStart-11025);
-	}
-	if (key=='n') {
-		waveLength= min(waveObject->getBufferLengthSmpls(),waveLength+11025);
-	}
-	if (key=='m') {
-		waveLength= max(0,waveLength-11025);
-	}
-	if (key=='g') {
-		meshDetail +=10;
-	}
-	if (key=='h') {
-		meshDetail= max(0,waveLength-10);
+        playPosition = 0;
 	}
 	if (key=='p') {
         if(!isRecording) {
-            playPosition = waveStart;
+            playPosition = 0;
+            isPlaying = true;
+        }
+	}
+	if (key=='o') {
+        if(isPlaying) {
+            isPlaying = false;
+        } else {
             isPlaying = true;
         }
 	}

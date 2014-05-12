@@ -16,7 +16,7 @@ void ofApp::update(){
     string letters = "abcdef";
     
     for (int i = 0; i < 6; i++) {
-        values[i] = sin(((i+1) * 0.02) * (float)ofGetFrameNum());
+        values[i] = sin(((i+1) * 0.2) * (float)ofGetFrameNum());
         ofxOscMessage m;
         string address = "/value/";
         address += letters[i];
