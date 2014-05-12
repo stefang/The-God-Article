@@ -32,7 +32,7 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
         
         int	currentSlot, playPosition;
-        bool isRecording, isPlaying;
+        bool isRecording, isPlaying, isListening;
     
         // Audio
         void audioIn (float * input, int bufferSize, int nChannels);

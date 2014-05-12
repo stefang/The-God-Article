@@ -12,7 +12,7 @@ void ofApp::setup(){
     soundStream.listDevices();
     soundStream.setDeviceID(4);
     soundStream.setup(this, NUM_CHANNELS, NUM_CHANNELS, SAMPLE_RATE, STREAM_BUFFER_SIZE, 4);
-    waveObject = new ofxWaveHandler(&soundStream, WAVEBUFFER_MINSEC, ofGetWidth()-30, 400);
+    waveObject = new ofxWaveHandler(&soundStream, WAVEBUFFER_MINSEC, ofGetWidth()-30, 400, 100);
     
     receiver.setup(PORT);
     oscObject = new oscHandler(&receiver, ofGetWidth()-30, 400);
@@ -22,6 +22,7 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
     waveObject->updateWaveBuffer(waveStart, waveLength);
+    waveObject->updateOverviewBuffer();
     oscObject->update();
 }
 
@@ -37,10 +38,13 @@ void ofApp::draw(){
 	ofDrawBitmapString("PRESS M/N to set the drawn wave's length...",20,120);
     
 	waveObject->drawWaveBuffer(15,255);
+	waveObject->drawOverviewBuffer(15,655);
     
     if (isPlaying) {
         float playDiv = ((float)ofGetWidth()-30) / (float)(waveCurrent);
-        ofRect((playPosition * playDiv) - (waveStart * playDiv) + 15, 255, 3, 400);
+        ofRect((playPosition * playDiv) - (waveStart * playDiv) + 15, 255, 3, 395);
+        playDiv = ((float)ofGetWidth()-30) / (float)waveObject->getBufferLengthSmpls();
+        ofRect((playPosition * playDiv) + 15, 655, 3, 95);
     }
     
     oscObject->draw();
@@ -61,7 +65,9 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::audioIn(float* input, int bufferSize, int nChannels){
-	if(isRecording) waveObject->addSamples(input, bufferSize*nChannels);
+	if(isRecording) {
+        waveObject->addSamples(input, bufferSize*nChannels);
+    }
 }
 
 //--------------------------------------------------------------
