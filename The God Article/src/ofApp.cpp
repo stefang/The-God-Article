@@ -16,7 +16,8 @@ void ofApp::setup(){
     
     receiver.setup(PORT);
     oscObject = new oscHandler(&receiver, ofGetWidth()-30, 400);
-
+    
+    ofEnableAlphaBlending();
 }
 
 //--------------------------------------------------------------
@@ -29,7 +30,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofBackground(255,255, 255);
-	ofSetColor(20,20,20);
+	ofSetColor(20,20,20, 255);
 	ofDrawBitmapString("PRESS SPACE to start/pause recording to the end of the actual slot...",20,20);
 	ofDrawBitmapString("PRESS S to save current slot as in a file...",20,40);
 	ofDrawBitmapString("PRESS C to clear current slot...",20,60);
@@ -42,13 +43,18 @@ void ofApp::draw(){
     
     if (isPlaying) {
         float playDiv = ((float)ofGetWidth()-30) / (float)(waveCurrent);
-        ofRect((playPosition * playDiv) - (waveStart * playDiv) + 15, 255, 3, 395);
+        ofRect((playPosition * playDiv) - ((float)waveStart * playDiv) + 15, 255, 3, 395);
         playDiv = ((float)ofGetWidth()-30) / (float)waveObject->getBufferLengthSmpls();
         ofRect((playPosition * playDiv) + 15, 655, 3, 95);
+        float sectionDiv = ((float)ofGetWidth()-30) / (float)waveObject->getBufferLengthSmpls();
+        ofSetColor(255,255,0,50);
+        ofRect((waveStart * sectionDiv) + 15, 655, (float)(waveCurrent) * sectionDiv, 100);
     }
     
+    ofSetColor(255,255,255,255);
+
     oscObject->draw();
-    
+ 
 	ofDrawBitmapString("SLOT: "+ofToString(currentSlot),25,275);
 	ofDrawBitmapString("Current buffer size in samples... "+ofToString(waveObject->getBufferLengthSmpls()),25,560);
 	ofDrawBitmapString("Current buffer size in seconds... "+ofToString(waveObject->getBufferLengthSec(),2),25,580);
@@ -116,18 +122,20 @@ void ofApp::keyPressed(int key){
 		string dataNameToLoad="0"+ofToString(currentSlot)+string(".txt");
 		waveObject->loadBuffer(fileNameToLoad);
 		oscObject->loadBuffer(dataNameToLoad);
+        waveStart = 0;
+        waveLength = 0;
 	}
 	if (key=='c') {
 		waveObject->clearBuffer();
 	}
 	if (key=='k') {
-		waveStart +=22050;
+		waveStart= min(waveObject->getBufferLengthSmpls(),waveStart+11025);
 	}
 	if (key=='l') {
-		waveStart= max(0,waveStart-44100);
+		waveStart= max(0,waveStart-11025);
 	}
 	if (key=='n') {
-		waveLength +=11025;
+		waveLength= min(waveObject->getBufferLengthSmpls(),waveLength+11025);
 	}
 	if (key=='m') {
 		waveLength= max(0,waveLength-11025);
@@ -144,6 +152,7 @@ void ofApp::keyPressed(int key){
             isPlaying = true;
         }
 	}
+
 }
 
 //--------------------------------------------------------------
