@@ -7,6 +7,8 @@ void ofApp::setup(){
 	waveLength = 0;
 	meshDetail = 0;
     
+    // loadSettings();
+    
     isRecording=false;
     isPlaying=false;
     soundStream.listDevices();
@@ -14,7 +16,7 @@ void ofApp::setup(){
     soundStream.setup(this, NUM_CHANNELS, NUM_CHANNELS, SAMPLE_RATE, STREAM_BUFFER_SIZE, 4);
     waveObject = new ofxWaveHandler(&soundStream, WAVEBUFFER_MINSEC, (ofGetWidth()-30) * 4, 400, ofGetWidth()-30, 75);
 
-    receiver.setup(PORT);
+    receiver.setup(12345);
     oscObject = new oscHandler(&receiver, (ofGetWidth()-30) * 4, 400);
     
     ofEnableAlphaBlending();
@@ -68,7 +70,20 @@ void ofApp::draw(){
 
 }
 
-//--------------------------------------------------------------
+//void ofApp::loadSettings() {
+//    ofxXmlSettings configXml;
+//    
+//    if ( configXml.loadFile("settings.xml") ) {
+//        cout << "Loaded settings.xml" << endl;
+//    } else {
+//        cout << "Could not load settings.xml" << endl;
+//    }
+//    
+//    config.audio_in = configXml.getValue( "AUDIO::IN", 0 );
+//    config.osc_port = configXml.getValue( "OSC::PORT", 7000 );
+//    
+//}
+
 void ofApp::audioIn(float* input, int bufferSize, int nChannels){
 	if(isRecording) {
         waveObject->addSamples(input, bufferSize*nChannels);

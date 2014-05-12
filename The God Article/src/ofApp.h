@@ -11,11 +11,16 @@
 #define STREAM_BUFFER_SIZE 1024
 #define WAVEBUFFER_MINSEC 60
 
-#define PORT 12345
-
 class ofApp : public ofBaseApp{
 
 	public:
+    
+    struct AppConfig {
+        string audio_in;
+        string osc_port;
+    };
+
+    
 		void setup();
 		void update();
 		void draw();
@@ -31,7 +36,9 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
     
-        ofTexture currentPlayback;
+        void loadSettings();
+    
+        AppConfig               config;
     
         int	currentSlot, playPosition;
         bool isRecording, isPlaying, isListening;

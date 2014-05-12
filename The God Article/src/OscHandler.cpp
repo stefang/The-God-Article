@@ -21,7 +21,7 @@ oscHandler::oscHandler(ofxOscReceiver* rec, int w, int h) {
     
     for (int i = 0; i < 13; i++) {
         values.push_back(0.0f);
-        adjustments.push_back(0.0f);
+        adjustments.push_back(1.0f);
     }
 }
 
