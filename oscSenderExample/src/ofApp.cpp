@@ -16,7 +16,7 @@ void ofApp::update(){
     string letters = "abcdef";
     
     for (int i = 0; i < 6; i++) {
-        values[i] = sin(((i+1) * 0.2) * (float)ofGetFrameNum());
+        values[i] = sin(((i+1) * 0.02) * (float)ofGetFrameNum());
         ofxOscMessage m;
         string address = "/value/";
         address += letters[i];
@@ -29,6 +29,15 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    ofBackground(40, 100, 40);
+    ofSetColor(0);
+    ofPushMatrix();
+    for (int i = 0; i < values.size(); i++) {
+        ofTranslate(0,40);
+        ofRect(150, 0, values[i] * 100, 10);
+    }
+    ofPopMatrix();
+
 }
 
 //--------------------------------------------------------------

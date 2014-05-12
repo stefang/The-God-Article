@@ -14,13 +14,15 @@ oscHandler::oscHandler(ofxOscReceiver* rec, int w, int h) {
     width = w;
     height = h;
     
-    oscDisplay.allocate(width, height);
+    oscDisplay.allocate(width, height, GL_RGBA);
+    oscDisplay.begin();
+    ofClear(255,255,255,255);
+    oscDisplay.end();
     
     for (int i = 0; i < 8; i++) {
         values.push_back(0.0f);
         adjustments.push_back(0.0f);
         ofPolyline cur;
-        lines.push_back(cur);
     }
 }
 
@@ -84,22 +86,20 @@ void oscHandler::update() {
 
 void oscHandler::updateOSCBuffer() {
     
-    float step = width / values.size();
+    float step = (float)width / (float)buffer.size();
+    float vstep = (float)height / (float)values.size();
 
-    for (int i = 0; i < values.size(); i++) {
-        lines[i].clear();
-        for (int h = 0; h < buffer.size(); h++) {
-            lines[i].addVertex(ofPoint(h*step, buffer[h][i] * 30));
-        }
-    }
-    
     oscDisplay.begin();
-    ofBackground(255);
-    ofSetColor(0);
+    ofClear(255,255,255, 0);
+    ofSetColor(0,0,0,150);
+    ofFill();
     ofPushMatrix();
     for (int i = 0; i < values.size(); i++) {
-        ofTranslate(0,20);
-        lines[i].draw();
+        ofTranslate(0, vstep);
+        for (int h = 0; h < buffer.size(); h++) {
+            ofRect(h*step, 0, step, buffer[h][i]*(vstep*0.5));
+        }
+
     }
     ofPopMatrix();
     oscDisplay.end();
@@ -113,11 +113,36 @@ void oscHandler::setSlot(int slot) {
     currentSlot = slot;
 }
 
-int oscHandler::loadBuffer(string fileName) {
+void oscHandler::clearBuffer() {
     buffer.clear();
 }
 
-int oscHandler::saveBuffer(string fileName){
+int oscHandler::loadBuffer(string fileName) {
+    buffer.clear();
+    string fileContents = ofBufferFromFile(ofToDataPath(fileName));
+    vector<string> lines = ofSplitString(fileContents, "\n");
+    for (int l = 0; l < lines.size(); l++) {
+        vector<string> vals = ofSplitString(lines[l], ",");
+        vector<float> valsf;
+         for (int v = 0; v < vals.size(); v++) {
+             valsf.push_back(ofToFloat(vals[v]));
+         }
+         buffer.push_back(valsf);
+     }
+}
 
+int oscHandler::saveBuffer(string fileName){
+    ofFile newFile(ofToDataPath(fileName), ofFile::WriteOnly);
+    newFile.create();
+    for (int h = 0; h < buffer.size(); h++) {
+        for (int i = 0; i < values.size(); i++) {
+            newFile << buffer[h][i];
+            if (i < values.size()-1 ) {
+                newFile << ",";
+            }
+        }
+        newFile << endl;
+    }
+    newFile.close();
 }
 

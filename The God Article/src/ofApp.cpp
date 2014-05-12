@@ -12,10 +12,10 @@ void ofApp::setup(){
     soundStream.listDevices();
     soundStream.setDeviceID(4);
     soundStream.setup(this, NUM_CHANNELS, NUM_CHANNELS, SAMPLE_RATE, STREAM_BUFFER_SIZE, 4);
-    waveObject = new ofxWaveHandler(&soundStream, WAVEBUFFER_MINSEC, (ofGetWidth()-30) * 2, 400, ofGetWidth()-30, 100);
+    waveObject = new ofxWaveHandler(&soundStream, WAVEBUFFER_MINSEC, (ofGetWidth()-30) * 4, 400, ofGetWidth()-30, 100);
 
     receiver.setup(PORT);
-    oscObject = new oscHandler(&receiver, (ofGetWidth()-30) * 2, 400);
+    oscObject = new oscHandler(&receiver, (ofGetWidth()-30) * 4, 400);
     
     ofEnableAlphaBlending();
 }
@@ -26,6 +26,7 @@ void ofApp::update(){
         oscObject->update();
         waveObject->updateOverviewBuffer();
     }
+    ofSetWindowTitle(ofToString(ofGetFrameRate(), 0));
 }
 
 //--------------------------------------------------------------
@@ -38,14 +39,18 @@ void ofApp::draw(){
 	ofDrawBitmapString("PRESS S to save current slot as in a file...",20,80);
 	ofDrawBitmapString("PRESS C to clear current slot...",20,100);
 	ofDrawBitmapString("PRESS 0-9 to select new slot and load sample if there were any saved...",20,120);
+	ofDrawBitmapString("SLOT: "+ofToString(currentSlot),20,140);
     
 	waveObject->drawOverviewBuffer(15,655);
     
-    int offset = (ofGetWidth() * 0.5) - (playPosition * ((float)(ofGetWidth()-30) * 2) / (float)waveObject->getBufferLengthSmpls());
+    float gw = (float)ofGetWidth()-35; // Why 35???!!!
+    float gwDiv = gw/waveObject->getBufferLengthSmplsf();
+    float pos = playPosition * gwDiv;
+
+    int offset = (int)(((gw * 0.5) - (pos * 4)));
+    
     waveObject->drawWaveBuffer(offset, 250);
-    // ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
-    oscObject->drawOSCBuffer(offset, 10);
-    // ofDisableBlendMode();
+    oscObject->drawOSCBuffer(offset, 250);
 
     if (isPlaying) {
         ofSetColor(100, 100);
@@ -56,9 +61,6 @@ void ofApp::draw(){
     
     ofSetColor(255,255,255,255);
 
- 
-	ofDrawBitmapString("SLOT: "+ofToString(currentSlot),25,275);
-    
 	if(isRecording){
 		ofSetCircleResolution(50);
 		ofSetColor(255,0,0);
@@ -121,6 +123,7 @@ void ofApp::keyPressed(int key){
 		oscObject->loadBuffer(dataNameToLoad);
         waveObject->updateWaveBuffer(0, waveObject->getBufferLengthSmpls());
         waveObject->updateOverviewBuffer();
+        oscObject->updateOSCBuffer();
         playPosition = 0;
 	}
 	if (key=='c') {
@@ -165,6 +168,12 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+    float mult = waveObject->getBufferLengthSmpls() / (ofGetWidth()-30);
+    int pos = (int)((x-15) * mult);
+    if (pos >= waveObject->getBufferLengthSmpls()-1) {
+        pos = waveObject->getBufferLengthSmpls()-1;
+    }
+    playPosition = pos;
 
 }
 

@@ -25,6 +25,7 @@ class oscHandler
     void drawOSCBuffer(int x = 0, int y = 0);
     void updateOSCBuffer();
 
+    void clearBuffer();
     int loadBuffer(string fileName);
     int saveBuffer(string fileName);
     
@@ -36,7 +37,6 @@ class oscHandler
     ofxOscReceiver* receiver;
     vector<float> values;
     vector<float> adjustments;
-    vector<ofPolyline> lines;
     vector< vector<float> > buffer;
     
 };
