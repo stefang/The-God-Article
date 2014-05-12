@@ -19,40 +19,54 @@ oscHandler::oscHandler(ofxOscReceiver* rec, int w, int h) {
     ofClear(255,255,255,255);
     oscDisplay.end();
     
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 13; i++) {
         values.push_back(0.0f);
         adjustments.push_back(0.0f);
-        ofPolyline cur;
     }
 }
 
-void oscHandler::update() {
+void oscHandler::update(bool record) {
     while(receiver->hasWaitingMessages()){
         ofxOscMessage m;
         receiver->getNextMessage(&m);
-        if(m.getAddress() == "/value/a"){
+        if(m.getAddress() == "/amp"){
             values[0] = m.getArgAsFloat(0);
         }
-        if(m.getAddress() == "/value/b"){
+        if(m.getAddress() == "/freq"){
             values[1] = m.getArgAsFloat(0);
         }
-        if(m.getAddress() == "/value/c"){
+        if(m.getAddress() == "/specCentroid"){
             values[2] = m.getArgAsFloat(0);
         }
-        if(m.getAddress() == "/value/d"){
+        if(m.getAddress() == "/specFlatness"){
             values[3] = m.getArgAsFloat(0);
         }
-        if(m.getAddress() == "/value/e"){
+        if(m.getAddress() == "/loudness"){
             values[4] = m.getArgAsFloat(0);
         }
-        if(m.getAddress() == "/value/f"){
+        if(m.getAddress() == "/Arduino/Hole1"){
             values[5] = m.getArgAsFloat(0);
         }
-        if(m.getAddress() == "/value/g"){
+        if(m.getAddress() == "/Arduino/Hole2"){
             values[6] = m.getArgAsFloat(0);
         }
-        if(m.getAddress() == "/value/h"){
+        if(m.getAddress() == "/Arduino/Hole3"){
             values[7] = m.getArgAsFloat(0);
+        }
+        if(m.getAddress() == "/Arduino/Hole4"){
+            values[8] = m.getArgAsFloat(0);
+        }
+        if(m.getAddress() == "/Arduino/Hole5"){
+            values[9] = m.getArgAsFloat(0);
+        }
+        if(m.getAddress() == "/Arduino/Hole6"){
+            values[10] = m.getArgAsFloat(0);
+        }
+        if(m.getAddress() == "/Arduino/Hole7"){
+            values[11] = m.getArgAsFloat(0);
+        }
+        if(m.getAddress() == "/Arduino/Pressure"){
+            values[12] = m.getArgAsFloat(0);
         }
         if(m.getAddress() == "/scale/1"){
             adjustments[0] = m.getArgAsFloat(0);
@@ -78,16 +92,31 @@ void oscHandler::update() {
         if(m.getAddress() == "/scale/8"){
             adjustments[7] = m.getArgAsFloat(0);
         }
+        if(m.getAddress() == "/scale/9"){
+            adjustments[8] = m.getArgAsFloat(0);
+        }
+        if(m.getAddress() == "/scale/10"){
+            adjustments[9] = m.getArgAsFloat(0);
+        }
+        if(m.getAddress() == "/scale/11"){
+            adjustments[10] = m.getArgAsFloat(0);
+        }
+        if(m.getAddress() == "/scale/12"){
+            adjustments[11] = m.getArgAsFloat(0);
+        }
+        if(m.getAddress() == "/scale/13"){
+            adjustments[12] = m.getArgAsFloat(0);
+        }
     }
     
-    buffer.push_back(values);
+    if (record) buffer.push_back(values);
     
 }
 
 void oscHandler::updateOSCBuffer() {
     
     float step = (float)width / (float)buffer.size();
-    float vstep = (float)height / (float)values.size();
+    float vstep = (float)height / (float)values.size()+1;
 
     oscDisplay.begin();
     ofClear(255,255,255, 0);
@@ -97,9 +126,9 @@ void oscHandler::updateOSCBuffer() {
     for (int i = 0; i < values.size(); i++) {
         ofTranslate(0, vstep);
         for (int h = 0; h < buffer.size(); h++) {
-            ofRect(h*step, 0, step, buffer[h][i]*(vstep*0.5));
+            cout << adjustments[i] << endl;
+            ofRect(h*step, 0, step, (buffer[h][i]*adjustments[i])*(vstep*0.5));
         }
-
     }
     ofPopMatrix();
     oscDisplay.end();

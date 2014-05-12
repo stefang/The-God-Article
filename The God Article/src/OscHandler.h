@@ -20,7 +20,7 @@ class oscHandler
     oscHandler(ofxOscReceiver* receiver=NULL, int width=0, int height=0);
     ~oscHandler();
     
-    void update();
+    void update(bool record);
     void setSlot(int slot);
     void drawOSCBuffer(int x = 0, int y = 0);
     void updateOSCBuffer();

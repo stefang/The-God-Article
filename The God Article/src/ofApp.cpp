@@ -12,7 +12,7 @@ void ofApp::setup(){
     soundStream.listDevices();
     soundStream.setDeviceID(4);
     soundStream.setup(this, NUM_CHANNELS, NUM_CHANNELS, SAMPLE_RATE, STREAM_BUFFER_SIZE, 4);
-    waveObject = new ofxWaveHandler(&soundStream, WAVEBUFFER_MINSEC, (ofGetWidth()-30) * 4, 400, ofGetWidth()-30, 100);
+    waveObject = new ofxWaveHandler(&soundStream, WAVEBUFFER_MINSEC, (ofGetWidth()-30) * 4, 400, ofGetWidth()-30, 75);
 
     receiver.setup(PORT);
     oscObject = new oscHandler(&receiver, (ofGetWidth()-30) * 4, 400);
@@ -23,9 +23,9 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
     if (isRecording) {
-        oscObject->update();
         waveObject->updateOverviewBuffer();
     }
+    oscObject->update(isRecording);
     ofSetWindowTitle(ofToString(ofGetFrameRate(), 0));
 }
 
@@ -43,11 +43,10 @@ void ofApp::draw(){
     
 	waveObject->drawOverviewBuffer(15,655);
     
-    float gw = (float)ofGetWidth()-35; // Why 35???!!!
-    float gwDiv = gw/waveObject->getBufferLengthSmplsf();
-    float pos = playPosition * gwDiv;
-
-    int offset = (int)(((gw * 0.5) - (pos * 4)));
+    float gw = (float)ofGetWidth();
+    float gwDiv = (gw-30)/waveObject->getBufferLengthSmplsf();
+    float pos = (playPosition * gwDiv) * 4;
+    int offset = (int)(((gw * 0.5) - pos));
     
     waveObject->drawWaveBuffer(offset, 250);
     oscObject->drawOSCBuffer(offset, 250);
@@ -56,7 +55,7 @@ void ofApp::draw(){
         ofSetColor(100, 100);
         ofRect(ofGetWidth() * 0.5, 250, 5, 400);
         float playDiv = ((float)ofGetWidth()-30) / (float)waveObject->getBufferLengthSmpls();
-        ofRect((playPosition * playDiv) + 15, 655, 3, 100);
+        ofRect((playPosition * playDiv) + 15, 655, 3, 75);
     }
     
     ofSetColor(255,255,255,255);
@@ -132,6 +131,7 @@ void ofApp::keyPressed(int key){
 	}
 	if (key=='p') {
         if(!isRecording) {
+            oscObject->updateOSCBuffer();
             playPosition = 0;
             isPlaying = true;
         }
