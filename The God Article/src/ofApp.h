@@ -4,11 +4,14 @@
 #include "ofxOsc.h"
 #include "ofxWaveHandler.h"
 #include "ofxXmlSettings.h"
+#include "oscHandler.h"
 
 #define NUM_CHANNELS 1
 #define SAMPLE_RATE 44100
 #define STREAM_BUFFER_SIZE 1024
 #define WAVEBUFFER_MINSEC 60
+
+#define PORT 12345
 
 class ofApp : public ofBaseApp{
 
@@ -28,18 +31,18 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
         
-        int				currentSlot;
-        bool			isRecording, isPlaying;
+        int	currentSlot, playPosition;
+        bool isRecording, isPlaying;
     
         // Audio
-        void audioIn  (float * input, int bufferSize, int nChannels);
+        void audioIn (float * input, int bufferSize, int nChannels);
         void audioOut (float * output, int bufferSize, int nChannels);
-        ofSoundStream	soundStream;
+        ofSoundStream soundStream;
         ofxWaveHandler* waveObject;
-        int				waveStart, waveLength, meshDetail, playPosition;
+        int	waveStart, waveLength, meshDetail, waveCurrent;
     
         //OSC
-    
-        
+        ofxOscReceiver receiver;
+        oscHandler* oscObject;
 
 };
