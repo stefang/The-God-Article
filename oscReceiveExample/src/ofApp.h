@@ -3,9 +3,6 @@
 #include "ofMain.h"
 #include "ofxOsc.h"
 
-#define PORT 12345
-#define NUM_MSG_STRINGS 20
-
 class ofApp : public ofBaseApp {
 	public:
 
@@ -32,6 +29,7 @@ class ofApp : public ofBaseApp {
 		ofTrueTypeFont font;
 		ofxOscReceiver receiver;
         vector<float> values;
+        vector<float> adjustments;
         vector<ofPolyline> lines;
         vector< vector<float> > history, record;
         ofVec2f pos;

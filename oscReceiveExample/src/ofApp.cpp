@@ -2,17 +2,11 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	// listen on the given port
-	cout << "listening for osc messages on port " << PORT << "\n";
-	receiver.setup(PORT);
+	receiver.setup(12345);
 
-	mouseX = 0;
-	mouseY = 0;
-
-	ofBackground(30, 30, 130);
-    
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 8; i++) {
         values.push_back(0.0f);
+        adjustments.push_back(0.0f);
         ofPolyline cur;
         lines.push_back(cur);
     }
@@ -57,6 +51,38 @@ void ofApp::update(){
             if(m.getAddress() == "/value/f"){
                 values[5] = m.getArgAsFloat(0);
             }
+            if(m.getAddress() == "/value/g"){
+                values[6] = m.getArgAsFloat(0);
+            }
+            if(m.getAddress() == "/value/h"){
+                values[7] = m.getArgAsFloat(0);
+            }
+
+            if(m.getAddress() == "/scale/1"){
+                adjustments[0] = m.getArgAsFloat(0);
+            }
+            if(m.getAddress() == "/scale/2"){
+                adjustments[1] = m.getArgAsFloat(0);
+            }
+            if(m.getAddress() == "/scale/3"){
+                adjustments[2] = m.getArgAsFloat(0);
+            }
+            if(m.getAddress() == "/scale/4"){
+                adjustments[3] = m.getArgAsFloat(0);
+            }
+            if(m.getAddress() == "/scale/5"){
+                adjustments[4] = m.getArgAsFloat(0);
+            }
+            if(m.getAddress() == "/scale/6"){
+                adjustments[5] = m.getArgAsFloat(0);
+            }
+            if(m.getAddress() == "/scale/7"){
+                adjustments[6] = m.getArgAsFloat(0);
+            }
+            if(m.getAddress() == "/scale/8"){
+                adjustments[7] = m.getArgAsFloat(0);
+            }
+            
         }
         
         history.push_back(values);
