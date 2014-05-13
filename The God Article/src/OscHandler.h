@@ -25,11 +25,11 @@ class oscHandler
 
     void updateMeshes();
     void drawOSCBuffer(int x = 0, int y = 0);
+    void drawCircularBuffer(int x = 0, int y = 0, int pos = 0);
 
     void clearBuffer();
     int loadBuffer(string fileName);
     int saveBuffer(string fileName);
-    
     
     int currentSlot;
     

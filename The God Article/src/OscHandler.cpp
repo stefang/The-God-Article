@@ -18,6 +18,7 @@ oscHandler::oscHandler(ofxOscReceiver* rec, int w, int h) {
     }
     adjustments.push_back(0.25f);
     speed = 4;
+    ofSetCircleResolution(40);
 }
 
 oscHandler::~oscHandler() {
@@ -154,6 +155,22 @@ void oscHandler::drawOSCBuffer(int x, int y) {
     }
 }
 
+void oscHandler::drawCircularBuffer(int x, int y, int pos) {
+    ofPushMatrix();
+    ofTranslate(x, y);
+    if (buffer.size() > 0 && pos < buffer.size()) {
+        ofSetColor(234,234,205);
+        ofRect(0, 0, width, height);
+        ofSetColor(255, 255, 255, 200);
+        vector<float> vals = buffer[pos];
+        ofCircle(ofGetWidth()*0.5, height*0.5, (height*0.4) * vals[0]);
+        ofSetColor(126,137,145, 125);
+        ofCircle(ofGetWidth()*0.5, height*0.5, (height*0.4) * vals[1]);
+        
+    }
+    ofPopMatrix();
+}
+
 void oscHandler::updateMeshes() {
     
     if (buffer.size() > 0) {
@@ -222,6 +239,7 @@ void oscHandler::setSlot(int slot) {
 
 void oscHandler::clearBuffer() {
     buffer.clear();
+    updateMeshes();
 }
 
 int oscHandler::loadBuffer(string fileName) {

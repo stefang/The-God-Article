@@ -43,6 +43,7 @@ void ofApp::draw(){
 	ofDrawBitmapString("PRESS C to clear current slot...",20,60);
 	ofDrawBitmapString("PRESS 0-9 to select new slot and load sample if there were any saved...",620,60);
 	ofDrawBitmapString("SLOT: "+ofToString(currentSlot),20,80);
+	ofDrawBitmapString("PRESS Q-W to select linear or circular visualisations...",620,80);
     
 	waveObject->drawOverviewBuffer(15,860);
     
@@ -60,6 +61,18 @@ void ofApp::draw(){
         oscObject->drawOSCBuffer(offset, 95);
         ofSetColor(100, 90);
         ofRect(ofGetWidth() * 0.5, 95, 3, 750);
+    }
+    
+    if (view == 1) {
+        int pos;
+        if(isRecording){
+            pos = oscObject->buffer.size()-1;
+        }
+        if(isPlaying){
+            float div = oscObject->buffer.size() / waveObject->getBufferLengthSmplsf();
+            pos = (playPosition * div);
+        }
+        oscObject->drawCircularBuffer(0, 95, pos);
     }
 
     ofSetColor(100, 100);
@@ -148,6 +161,7 @@ void ofApp::keyPressed(int key){
 	}
 	if (key=='c') {
 		waveObject->clearBuffer();
+        oscObject->clearBuffer();
         playPosition = 0;
 	}
 	if (key=='p') {
