@@ -67,8 +67,7 @@ void ofApp::draw(){
         int pos;
         if(isRecording){
             pos = oscObject->buffer.size()-1;
-        }
-        if(isPlaying){
+        } else {
             float div = oscObject->buffer.size() / waveObject->getBufferLengthSmplsf();
             pos = (playPosition * div);
         }
