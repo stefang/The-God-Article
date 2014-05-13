@@ -51,8 +51,6 @@ void ofApp::draw(){
         float gwDiv = (gw-30)/waveObject->getBufferLengthSmplsf();
         float pos = (playPosition * gwDiv) * 64;
         int offset = (int)(((gw * 0.5) - pos));
-        // waveObject->drawWaveMesh(offset, 150);
-        // waveObject->drawWaveBuffer(offset, 150);
         oscObject->drawOSCBuffer(offset, 95);
         ofSetColor(100, 90);
         ofRect(ofGetWidth() * 0.5, 95, 3, 750);

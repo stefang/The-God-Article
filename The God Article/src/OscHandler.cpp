@@ -10,15 +10,12 @@
 
 oscHandler::oscHandler(ofxOscReceiver* rec, int w, int h) {
     receiver = rec;
-    
     width = w;
     height = h;
-    
     for (int i = 0; i < 13; i++) {
         values.push_back(0.0f);
         adjustments.push_back(1.0f);
     }
-    
 }
 
 oscHandler::~oscHandler() {
@@ -118,7 +115,6 @@ void oscHandler::drawOSCBuffer(int x, int y) {
     if (buffer.size() > 0) {
         ofPushMatrix();
         ofTranslate(x, y);
-        ofClear(255,255,255, 0);
         ofSetColor(254, 253, 245,255);
         ofRect(0, 0, width, height*0.5);
         ofSetColor(249,249,249,255);
