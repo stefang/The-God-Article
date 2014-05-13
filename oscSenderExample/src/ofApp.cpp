@@ -22,13 +22,13 @@ void ofApp::update(){
     i++;
     ofxOscMessage b;
     b.setAddress("/freq");
-    b.addFloatArg(((cos(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
+    b.addFloatArg((((cos(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5) * 20000);
     sender.sendMessage(b);
     
     i++;
     ofxOscMessage c;
     c.setAddress("/specCentroid");
-    c.addFloatArg(((sin(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
+    c.addFloatArg((((cos(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5) * 20000);
     sender.sendMessage(c);
     
     i++;
@@ -40,7 +40,7 @@ void ofApp::update(){
     i++;
     ofxOscMessage n;
     n.setAddress("/loudness");
-    n.addFloatArg(((sin(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
+    n.addFloatArg((((cos(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5) * 64);
     sender.sendMessage(n);
 
     i++;

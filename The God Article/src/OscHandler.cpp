@@ -34,16 +34,16 @@ void oscHandler::update(bool record) {
             values[0] = m.getArgAsFloat(0);
         }
         if(m.getAddress() == "/freq"){
-            values[1] = m.getArgAsFloat(0);
+            values[1] = m.getArgAsFloat(0) / 20000;
         }
         if(m.getAddress() == "/specCentroid"){
-            values[2] = m.getArgAsFloat(0);
+            values[2] = m.getArgAsFloat(0) / 20000;
         }
         if(m.getAddress() == "/specFlatness"){
             values[3] = m.getArgAsFloat(0);
         }
         if(m.getAddress() == "/loudness"){
-            values[4] = m.getArgAsFloat(0);
+            values[4] = m.getArgAsFloat(0) / 64;
         }
         if(m.getAddress() == "/Arduino/Hole1"){
             values[5] = m.getArgAsFloat(0);
@@ -165,7 +165,7 @@ void oscHandler::drawCircularBuffer(int x, int y, int pos) {
         vector<float> vals = buffer[pos];
         ofCircle(ofGetWidth()*0.5, height*0.5, (height*0.4) * vals[0]);
         ofSetColor(126,137,145, 125);
-        ofCircle(ofGetWidth()*0.5, height*0.5, (height*0.4) * vals[1]);
+        ofCircle(ofGetWidth()*0.5, height*0.5, (height*0.4) * vals[12]);
         
     }
     ofPopMatrix();
@@ -185,13 +185,13 @@ void oscHandler::updateMeshes() {
         
         for (int h = 0; h < buffer.size()-1; h++) {
             ampFreq.addColor(ofColor(131,163,68,255));
-            ampFreq.addVertex(ofPoint(ofPoint(h*step, ((buffer[h][1] * adjustments[1]) * wHeight)+((buffer[h][0] * adjustments[0]) * wHeight), 0)));
+            ampFreq.addVertex(ofPoint(ofPoint(h*step, ((buffer[h][1] * adjustments[1]) * wHeight)+((buffer[h][12] * adjustments[12]) * wHeight), 0)));
             ampFreq.addColor(ofColor(131,163,68,255));
-            ampFreq.addVertex(ofPoint(ofPoint(h*step, (((buffer[h][1] * adjustments[1]) * wHeight))+(-(buffer[h][0] * adjustments[0]) * wHeight), 0)));
+            ampFreq.addVertex(ofPoint(ofPoint(h*step, (((buffer[h][1] * adjustments[1]) * wHeight))+(-(buffer[h][12] * adjustments[12]) * wHeight), 0)));
             ampFreq.addColor(ofColor(131,163,68,255));
-            ampFreq.addVertex(ofPoint(ofPoint((h+1)*step, ((buffer[h+1][1] * adjustments[1]) * wHeight)+((buffer[h+1][0] * adjustments[0]) * wHeight), 0)));
+            ampFreq.addVertex(ofPoint(ofPoint((h+1)*step, ((buffer[h+1][1] * adjustments[1]) * wHeight)+((buffer[h+1][12] * adjustments[12]) * wHeight), 0)));
             ampFreq.addColor(ofColor(131,163,68,255));
-            ampFreq.addVertex(ofPoint(ofPoint((h)*step, ((buffer[h][1] * adjustments[1])*wHeight)+(-(buffer[h][0] * adjustments[0]) * wHeight), 0)));
+            ampFreq.addVertex(ofPoint(ofPoint((h)*step, ((buffer[h][1] * adjustments[1])*wHeight)+(-(buffer[h][12] * adjustments[12]) * wHeight), 0)));
         }
         
         wHeight = height * 0.2;
