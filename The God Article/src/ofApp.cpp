@@ -8,8 +8,6 @@ void ofApp::setup(){
 	meshDetail = 0;
     
     loadSettings();
-    cout << config.audio_in << endl;
-    cout << config.osc_port << endl;
     
     isRecording=false;
     isPlaying=false;
@@ -32,6 +30,16 @@ void ofApp::update(){
     }
     oscObject->update(isRecording);
     ofSetWindowTitle(ofToString(ofGetFrameRate(), 0));
+}
+
+//--------------------------------------------------------------
+void ofApp::resetObjects() {
+//    delete oscObject;
+//    if (waveObject->getBufferLengthSmpls() > 0) {
+//        int fboWidth = (int)(waveObject->getBufferLengthSmpls() * 1);
+//        cout <<  fboWidth << endl;
+//        oscObject = new oscHandler(&receiver, 1500, 750);
+//    }
 }
 
 //--------------------------------------------------------------
@@ -143,14 +151,10 @@ void ofApp::keyPressed(int key){
 		currentSlot = key-'0';
 		string fileNameToLoad="0"+ofToString(currentSlot)+string(".wav");
 		string dataNameToLoad="0"+ofToString(currentSlot)+string(".txt");
+        resetObjects();
 		waveObject->loadBuffer(fileNameToLoad);
 		oscObject->loadBuffer(dataNameToLoad);
         
-        if (waveObject->getBufferLengthSmpls() > 0) {
-            int fboWidth = (int)(waveObject->getBufferLengthSmpls() * 1);
-            // waveObject->updateFBOSize(fboWidth, 750);
-            oscObject->updateFBOSize(fboWidth, 750);
-        }
 
         waveObject->updateWaveBuffer(0, waveObject->getBufferLengthSmpls());
         //waveObject->updateWaveMesh(0, 0, waveObject->getBufferLengthSmpls());

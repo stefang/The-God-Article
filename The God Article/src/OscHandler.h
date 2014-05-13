@@ -24,7 +24,6 @@ class oscHandler
     void setSlot(int slot);
     void drawOSCBuffer(int x = 0, int y = 0);
     void updateOSCBuffer();
-    void updateFBOSize(int width, int height);
 
     void clearBuffer();
     int loadBuffer(string fileName);

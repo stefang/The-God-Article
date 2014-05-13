@@ -25,15 +25,9 @@ oscHandler::oscHandler(ofxOscReceiver* rec, int w, int h) {
     
 }
 
-void oscHandler::updateFBOSize(int w, int h) {
-//    oscDisplay.clear();
-//    width = w;
-//    height = h;
-//    oscDisplay.push_back(ofFbo());
-//    oscDisplay[0].allocate(width, height);
-//    oscDisplay[0].begin();
-//    ofClear(255,255,255,255);
-//    oscDisplay[0].end();
+oscHandler::~oscHandler() {
+    values.clear();
+    adjustments.clear();
 }
 
 void oscHandler::update(bool record) {
@@ -143,16 +137,6 @@ void oscHandler::updateOSCBuffer() {
     
     ofSetColor(0,0,0,50);
 
-//    ofPushMatrix();
-//    ofTranslate(0, vstep*2);
-//    for (int i = 2; i < values.size(); i++) {
-//        ofTranslate(0, vstep);
-//        for (int h = 0; h < buffer.size(); h++) {
-//            ofRect(h*step, 0, step, (buffer[h][i]*adjustments[i])*(vstep*0.5)); 
-//        }
-//    }
-//    ofSetColor(255,0,0,255);
-//    ofPopMatrix();
     ofPushMatrix();
     ofTranslate(0, height * 0.3);
     ampFreq.draw();
