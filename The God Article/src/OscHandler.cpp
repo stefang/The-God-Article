@@ -194,6 +194,22 @@ void oscHandler::drawCircularBuffer(int x, int y, int pos) {
         ofCircle(ofGetWidth()*0.5, height*0.5, (height*0.4) * vals[1]);
         ofSetColor(126,137,145, 125);
         ofCircle(ofGetWidth()*0.5, height*0.5, (height*0.4) * vals[12]);
+        ofPushStyle();
+        ofPolyline noise;
+        float r = height*0.44;
+        for (int d = 0; d < 360; d++) {
+            float x, y, rn;
+            rn = vals[3]*5;
+            x = (r + (rn*sin(d*600))) * cos(ofDegToRad(d));
+            y = (r + (rn*sin(d*600))) * sin(ofDegToRad(d));
+            noise.addVertex(ofPoint((ofGetWidth()*0.5)+x,(height*0.5)+y));
+        }
+        noise.close();
+        ofSetColor(255,255,255,vals[3]*255);
+        ofSetLineWidth(2);
+        ofNoFill();
+        noise.draw();
+        ofPopStyle();
         
     }
     ofPopMatrix();
@@ -206,6 +222,23 @@ void oscHandler::drawCircularLive(int x, int y) {
     ofCircle(ofGetWidth()*0.5, height*0.5, (height*0.4) * values[0]);
     ofSetColor(255,137,145, 50);
     ofCircle(ofGetWidth()*0.5, height*0.5, (height*0.4) * values[12]);
+    ofPushStyle();
+    ofPolyline noise;
+    float r = height*0.46;
+    for (int d = 0; d < 360; d++) {
+        float x, y, rn;
+        rn = values[3]*5;
+        x = (r + (rn*sin(d*600))) * cos(ofDegToRad(d));
+        y = (r + (rn*sin(d*600))) * sin(ofDegToRad(d));
+        noise.addVertex(ofPoint((ofGetWidth()*0.5)+x,(height*0.5)+y));
+        // ofRect((ofGetWidth()*0.5)+x,(height*0.5)+y,1,1);
+    }
+    noise.close();
+    ofSetColor(0,0,0,values[3]*255);
+    ofSetLineWidth(1);
+    ofNoFill();
+    noise.draw();
+    ofPopStyle();
     ofPopMatrix();
 };
 
