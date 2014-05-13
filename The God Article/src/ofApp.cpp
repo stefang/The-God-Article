@@ -11,6 +11,7 @@ void ofApp::setup(){
     
     isRecording=false;
     isPlaying=false;
+    isLive=true;
     soundStream.listDevices();
     
     soundStream.setDeviceID(config.audio_in);
@@ -21,6 +22,7 @@ void ofApp::setup(){
     oscObject = new oscHandler(&receiver, (ofGetWidth()-30) * 32, 750);
     
     ofEnableAlphaBlending();
+    
 }
 
 //--------------------------------------------------------------
@@ -61,6 +63,10 @@ void ofApp::draw(){
         oscObject->drawOSCBuffer(offset, 95);
         ofSetColor(100, 90);
         ofRect(ofGetWidth() * 0.5, 95, 3, 750);
+        
+        if (isLive) {
+            oscObject->drawOSCLive(ofGetWidth() * 0.5, 95);
+        }
     }
     
     if (view == 1) {
@@ -72,6 +78,9 @@ void ofApp::draw(){
             pos = (playPosition * div);
         }
         oscObject->drawCircularBuffer(0, 95, pos);
+        if (isLive) {
+            oscObject->drawCircularLive(0, 95);
+        }
     }
 
     ofSetColor(100, 100);

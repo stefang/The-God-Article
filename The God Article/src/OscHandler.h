@@ -24,7 +24,9 @@ class oscHandler
     void setSlot(int slot);
 
     void updateMeshes();
+    void drawOSCLive(int x = 0, int y = 0);
     void drawOSCBuffer(int x = 0, int y = 0);
+    void drawCircularLive(int x = 0, int y = 0);
     void drawCircularBuffer(int x = 0, int y = 0, int pos = 0);
 
     void clearBuffer();

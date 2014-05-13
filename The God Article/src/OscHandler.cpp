@@ -120,6 +120,34 @@ void oscHandler::update(bool record) {
     updateMeshes();
 }
 
+void oscHandler::drawOSCLive(int x, int y) {
+    float wHeight = height * 0.1;
+    ofPushMatrix();
+    ofTranslate(x, y);
+    ofPushMatrix();
+    ofTranslate(0, height * 0.3);
+    ofSetColor(254, 100, 100, 100);
+    ofRect(-7, wHeight * values[1] , 17, values[12] * wHeight);
+    ofPopMatrix();
+    ofPushMatrix();
+    ofTranslate(0, (height * 0.75)+15);
+    ofRect(-7, -(values[4] * (wHeight*2)) , 17, values[4] * (wHeight * 4));
+    ofPopMatrix();
+    ofPushMatrix();
+    ofTranslate(0, (height * 0.55));
+    for (int i = 0; i < 7; i++) {
+        ofSetColor(0,0,157,(values[5+i] * 200));
+        ofRect(-7, 0, 17, 30);
+        if (i == 0 || i == 3) {
+            ofTranslate(0, 60);
+        } else {
+            ofTranslate(0, 40);
+        }
+    }
+    ofPopMatrix();
+    ofPopMatrix();
+};
+
 void oscHandler::drawOSCBuffer(int x, int y) {
     if (buffer.size() > 0) {
         ofPushMatrix();
@@ -163,13 +191,24 @@ void oscHandler::drawCircularBuffer(int x, int y, int pos) {
         ofRect(0, 0, width, height);
         ofSetColor(255, 255, 255, 200);
         vector<float> vals = buffer[pos];
-        ofCircle(ofGetWidth()*0.5, height*0.5, (height*0.4) * vals[0]);
+        ofCircle(ofGetWidth()*0.5, height*0.5, (height*0.4) * vals[1]);
         ofSetColor(126,137,145, 125);
         ofCircle(ofGetWidth()*0.5, height*0.5, (height*0.4) * vals[12]);
         
     }
     ofPopMatrix();
 }
+
+void oscHandler::drawCircularLive(int x, int y) {
+    ofPushMatrix();
+    ofTranslate(x, y);
+    ofSetColor(0, 0, 0, 50);
+    ofCircle(ofGetWidth()*0.5, height*0.5, (height*0.4) * values[0]);
+    ofSetColor(255,137,145, 50);
+    ofCircle(ofGetWidth()*0.5, height*0.5, (height*0.4) * values[12]);
+    ofPopMatrix();
+};
+
 
 void oscHandler::updateMeshes() {
     
