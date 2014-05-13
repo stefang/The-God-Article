@@ -70,64 +70,53 @@ void oscHandler::update(bool record) {
         }
         if(m.getAddress() == "/scale/1"){
             adjustments[0] = m.getArgAsFloat(0);
-            updateMeshes();
         }
         if(m.getAddress() == "/scale/2"){
             adjustments[1] = m.getArgAsFloat(0);
-            updateMeshes();
         }
         if(m.getAddress() == "/scale/3"){
             adjustments[2] = m.getArgAsFloat(0);
-            updateMeshes();
         }
         if(m.getAddress() == "/scale/4"){
             adjustments[3] = m.getArgAsFloat(0);
-            updateMeshes();
         }
         if(m.getAddress() == "/scale/5"){
             adjustments[4] = m.getArgAsFloat(0);
-            updateMeshes();
         }
         if(m.getAddress() == "/scale/6"){
             adjustments[5] = m.getArgAsFloat(0);
-            updateMeshes();
         }
         if(m.getAddress() == "/scale/7"){
             adjustments[6] = m.getArgAsFloat(0);
-            updateMeshes();
         }
         if(m.getAddress() == "/scale/8"){
             adjustments[7] = m.getArgAsFloat(0);
-            updateMeshes();
         }
         if(m.getAddress() == "/scale/9"){
             adjustments[8] = m.getArgAsFloat(0);
-            updateMeshes();
         }
         if(m.getAddress() == "/scale/10"){
             adjustments[9] = m.getArgAsFloat(0);
-            updateMeshes();
         }
         if(m.getAddress() == "/scale/11"){
             adjustments[10] = m.getArgAsFloat(0);
-            updateMeshes();
         }
         if(m.getAddress() == "/scale/12"){
             adjustments[11] = m.getArgAsFloat(0);
-            updateMeshes();
         }
         if(m.getAddress() == "/scale/13"){
             adjustments[12] = m.getArgAsFloat(0);
-            updateMeshes();
         }
         if(m.getAddress() == "/scale/14"){
             adjustments[13] = m.getArgAsFloat(0);
-            updateMeshes();
         }
     }
     
-    if (record) buffer.push_back(values);
-    
+    if (record) {
+        buffer.push_back(values);
+
+    }
+    updateMeshes();
 }
 
 void oscHandler::drawOSCBuffer(int x, int y) {
@@ -167,63 +156,64 @@ void oscHandler::drawOSCBuffer(int x, int y) {
 
 void oscHandler::updateMeshes() {
     
-    width = buffer.size() * (speed * adjustments[13]);
-    
-    float step = (float)width / (float)buffer.size();
-    float wHeight = height * 0.1;
-    
-	ampFreq.clear();
-	ampFreq.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
-	ampFreq.setupIndicesAuto();
-    
-    for (int h = 0; h < buffer.size()-1; h++) {
-		ampFreq.addColor(ofColor(131,163,68,255));
-		ampFreq.addVertex(ofPoint(ofPoint(h*step, ((buffer[h][1] * adjustments[1]) * wHeight)+((buffer[h][0] * adjustments[0]) * wHeight), 0)));
-		ampFreq.addColor(ofColor(131,163,68,255));
-		ampFreq.addVertex(ofPoint(ofPoint(h*step, (((buffer[h][1] * adjustments[1]) * wHeight))+(-(buffer[h][0] * adjustments[0]) * wHeight), 0)));
-		ampFreq.addColor(ofColor(131,163,68,255));
-		ampFreq.addVertex(ofPoint(ofPoint((h+1)*step, ((buffer[h+1][1] * adjustments[1]) * wHeight)+((buffer[h+1][0] * adjustments[0]) * wHeight), 0)));
-		ampFreq.addColor(ofColor(131,163,68,255));
-		ampFreq.addVertex(ofPoint(ofPoint((h)*step, ((buffer[h][1] * adjustments[1])*wHeight)+(-(buffer[h][0] * adjustments[0]) * wHeight), 0)));
-    }
-    
-    wHeight = height * 0.2;
-
-	breath.clear();
-	breath.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
-	breath.setupIndicesAuto();
-    
-    for (int h = 0; h < buffer.size()-1; h++) {
-		breath.addColor(ofColor(240,224,171,255));
-		breath.addVertex(ofPoint(ofPoint(h*step, (-buffer[h][4] * wHeight), 0)));
-		breath.addColor(ofColor(240,224,171,255));
-		breath.addVertex(ofPoint(ofPoint(h*step, (buffer[h][4] * wHeight), 0)));
-		breath.addColor(ofColor(240,224,171,255));
-		breath.addVertex(ofPoint(ofPoint((h+1)*step, (buffer[h+1][4] * wHeight), 0)));
-		breath.addColor(ofColor(240,224,171,255));
-		breath.addVertex(ofPoint(ofPoint((h)*step, (-buffer[h][4] * wHeight), 0)));
-    }
-    
-    fingers.clear();
-    for (int i = 0; i < 7; i++) {
-        fingers.push_back( ofMesh() );
-    }
-    for (int i = 0; i < 7; i++) {
-        fingers[i].clear();
-        fingers[i].setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
-        fingers[i].setupIndicesAuto();
+    if (buffer.size() > 0) {
+        width = buffer.size() * (speed * adjustments[13]);
+        
+        float step = (float)width / (float)buffer.size();
+        float wHeight = height * 0.1;
+        
+        ampFreq.clear();
+        ampFreq.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+        ampFreq.setupIndicesAuto();
+        
         for (int h = 0; h < buffer.size()-1; h++) {
-            fingers[i].addColor(ofColor(61,86,157,(buffer[h][5+i] * 200)));
-            fingers[i].addVertex(ofPoint(ofPoint(h*step, -15, 0)));
-            fingers[i].addColor(ofColor(61,86,157,(buffer[h][5+i] * 200)));
-            fingers[i].addVertex(ofPoint(ofPoint(h*step, 15, 0)));
-            fingers[i].addColor(ofColor(61,86,157,(buffer[h+1][5+i] * 200)));
-            fingers[i].addVertex(ofPoint(ofPoint((h+1)*step, 15, 0)));
-            fingers[i].addColor(ofColor(61,86,157,(buffer[h][5+i] * 200)));
-            fingers[i].addVertex(ofPoint(ofPoint((h)*step, -15, 0)));
+            ampFreq.addColor(ofColor(131,163,68,255));
+            ampFreq.addVertex(ofPoint(ofPoint(h*step, ((buffer[h][1] * adjustments[1]) * wHeight)+((buffer[h][0] * adjustments[0]) * wHeight), 0)));
+            ampFreq.addColor(ofColor(131,163,68,255));
+            ampFreq.addVertex(ofPoint(ofPoint(h*step, (((buffer[h][1] * adjustments[1]) * wHeight))+(-(buffer[h][0] * adjustments[0]) * wHeight), 0)));
+            ampFreq.addColor(ofColor(131,163,68,255));
+            ampFreq.addVertex(ofPoint(ofPoint((h+1)*step, ((buffer[h+1][1] * adjustments[1]) * wHeight)+((buffer[h+1][0] * adjustments[0]) * wHeight), 0)));
+            ampFreq.addColor(ofColor(131,163,68,255));
+            ampFreq.addVertex(ofPoint(ofPoint((h)*step, ((buffer[h][1] * adjustments[1])*wHeight)+(-(buffer[h][0] * adjustments[0]) * wHeight), 0)));
+        }
+        
+        wHeight = height * 0.2;
+        
+        breath.clear();
+        breath.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+        breath.setupIndicesAuto();
+        
+        for (int h = 0; h < buffer.size()-1; h++) {
+            breath.addColor(ofColor(240,224,171,255));
+            breath.addVertex(ofPoint(ofPoint(h*step, (-buffer[h][4] * wHeight), 0)));
+            breath.addColor(ofColor(240,224,171,255));
+            breath.addVertex(ofPoint(ofPoint(h*step, (buffer[h][4] * wHeight), 0)));
+            breath.addColor(ofColor(240,224,171,255));
+            breath.addVertex(ofPoint(ofPoint((h+1)*step, (buffer[h+1][4] * wHeight), 0)));
+            breath.addColor(ofColor(240,224,171,255));
+            breath.addVertex(ofPoint(ofPoint((h)*step, (-buffer[h][4] * wHeight), 0)));
+        }
+        
+        fingers.clear();
+        for (int i = 0; i < 7; i++) {
+            fingers.push_back( ofMesh() );
+        }
+        for (int i = 0; i < 7; i++) {
+            fingers[i].clear();
+            fingers[i].setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+            fingers[i].setupIndicesAuto();
+            for (int h = 0; h < buffer.size()-1; h++) {
+                fingers[i].addColor(ofColor(61,86,157,(buffer[h][5+i] * 200)));
+                fingers[i].addVertex(ofPoint(ofPoint(h*step, -15, 0)));
+                fingers[i].addColor(ofColor(61,86,157,(buffer[h][5+i] * 200)));
+                fingers[i].addVertex(ofPoint(ofPoint(h*step, 15, 0)));
+                fingers[i].addColor(ofColor(61,86,157,(buffer[h+1][5+i] * 200)));
+                fingers[i].addVertex(ofPoint(ofPoint((h+1)*step, 15, 0)));
+                fingers[i].addColor(ofColor(61,86,157,(buffer[h][5+i] * 200)));
+                fingers[i].addVertex(ofPoint(ofPoint((h)*step, -15, 0)));
+            }
         }
     }
-
 }
 
 void oscHandler::setSlot(int slot) {
