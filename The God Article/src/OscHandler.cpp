@@ -16,7 +16,8 @@ oscHandler::oscHandler(ofxOscReceiver* rec, int w, int h) {
         values.push_back(0.0f);
         adjustments.push_back(1.0f);
     }
-    speed = 1;
+    adjustments.push_back(0.25f);
+    speed = 4;
 }
 
 oscHandler::~oscHandler() {
@@ -69,42 +70,59 @@ void oscHandler::update(bool record) {
         }
         if(m.getAddress() == "/scale/1"){
             adjustments[0] = m.getArgAsFloat(0);
+            updateMeshes();
         }
         if(m.getAddress() == "/scale/2"){
             adjustments[1] = m.getArgAsFloat(0);
+            updateMeshes();
         }
         if(m.getAddress() == "/scale/3"){
             adjustments[2] = m.getArgAsFloat(0);
+            updateMeshes();
         }
         if(m.getAddress() == "/scale/4"){
             adjustments[3] = m.getArgAsFloat(0);
+            updateMeshes();
         }
         if(m.getAddress() == "/scale/5"){
             adjustments[4] = m.getArgAsFloat(0);
+            updateMeshes();
         }
         if(m.getAddress() == "/scale/6"){
             adjustments[5] = m.getArgAsFloat(0);
+            updateMeshes();
         }
         if(m.getAddress() == "/scale/7"){
             adjustments[6] = m.getArgAsFloat(0);
+            updateMeshes();
         }
         if(m.getAddress() == "/scale/8"){
             adjustments[7] = m.getArgAsFloat(0);
+            updateMeshes();
         }
         if(m.getAddress() == "/scale/9"){
             adjustments[8] = m.getArgAsFloat(0);
+            updateMeshes();
         }
         if(m.getAddress() == "/scale/10"){
             adjustments[9] = m.getArgAsFloat(0);
+            updateMeshes();
         }
         if(m.getAddress() == "/scale/11"){
             adjustments[10] = m.getArgAsFloat(0);
+            updateMeshes();
         }
         if(m.getAddress() == "/scale/12"){
             adjustments[11] = m.getArgAsFloat(0);
+            updateMeshes();
         }
         if(m.getAddress() == "/scale/13"){
             adjustments[12] = m.getArgAsFloat(0);
+            updateMeshes();
+        }
+        if(m.getAddress() == "/scale/14"){
+            adjustments[13] = m.getArgAsFloat(0);
+            updateMeshes();
         }
     }
     
@@ -149,7 +167,7 @@ void oscHandler::drawOSCBuffer(int x, int y) {
 
 void oscHandler::updateMeshes() {
     
-    width = buffer.size() * speed;
+    width = buffer.size() * (speed * adjustments[13]);
     
     float step = (float)width / (float)buffer.size();
     float wHeight = height * 0.1;
@@ -160,13 +178,13 @@ void oscHandler::updateMeshes() {
     
     for (int h = 0; h < buffer.size()-1; h++) {
 		ampFreq.addColor(ofColor(131,163,68,255));
-		ampFreq.addVertex(ofPoint(ofPoint(h*step, (buffer[h][1] * wHeight)+(buffer[h][0] * wHeight), 0)));
+		ampFreq.addVertex(ofPoint(ofPoint(h*step, ((buffer[h][1] * adjustments[1]) * wHeight)+((buffer[h][0] * adjustments[0]) * wHeight), 0)));
 		ampFreq.addColor(ofColor(131,163,68,255));
-		ampFreq.addVertex(ofPoint(ofPoint(h*step, ((buffer[h][1] * wHeight))+(-buffer[h][0] * wHeight), 0)));
+		ampFreq.addVertex(ofPoint(ofPoint(h*step, (((buffer[h][1] * adjustments[1]) * wHeight))+(-(buffer[h][0] * adjustments[0]) * wHeight), 0)));
 		ampFreq.addColor(ofColor(131,163,68,255));
-		ampFreq.addVertex(ofPoint(ofPoint((h+1)*step, (buffer[h+1][1] * wHeight)+(buffer[h+1][0] * wHeight), 0)));
+		ampFreq.addVertex(ofPoint(ofPoint((h+1)*step, ((buffer[h+1][1] * adjustments[1]) * wHeight)+((buffer[h+1][0] * adjustments[0]) * wHeight), 0)));
 		ampFreq.addColor(ofColor(131,163,68,255));
-		ampFreq.addVertex(ofPoint(ofPoint((h)*step, (buffer[h][1]*wHeight)+(-buffer[h][0] * wHeight), 0)));
+		ampFreq.addVertex(ofPoint(ofPoint((h)*step, ((buffer[h][1] * adjustments[1])*wHeight)+(-(buffer[h][0] * adjustments[0]) * wHeight), 0)));
     }
     
     wHeight = height * 0.2;
