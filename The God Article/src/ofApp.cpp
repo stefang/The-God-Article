@@ -7,17 +7,20 @@ void ofApp::setup(){
 	waveLength = 0;
 	meshDetail = 0;
     
-    // loadSettings();
+    loadSettings();
+    cout << config.audio_in << endl;
+    cout << config.osc_port << endl;
     
     isRecording=false;
     isPlaying=false;
     soundStream.listDevices();
-    soundStream.setDeviceID(4);
+    
+    soundStream.setDeviceID(config.audio_in);
     soundStream.setup(this, NUM_CHANNELS, NUM_CHANNELS, SAMPLE_RATE, STREAM_BUFFER_SIZE, 4);
-    waveObject = new ofxWaveHandler(&soundStream, WAVEBUFFER_MINSEC, (ofGetWidth()-30) * 4, 400, ofGetWidth()-30, 75);
+    waveObject = new ofxWaveHandler(&soundStream, WAVEBUFFER_MINSEC, (ofGetWidth()-30) * 4, 695, ofGetWidth()-30, 75);
 
-    receiver.setup(12345);
-    oscObject = new oscHandler(&receiver, (ofGetWidth()-30) * 4, 400);
+    receiver.setup(config.osc_port);
+    oscObject = new oscHandler(&receiver, (ofGetWidth()-30) * 4, 750);
     
     ofEnableAlphaBlending();
 }
@@ -36,53 +39,57 @@ void ofApp::draw(){
     ofBackground(255,255, 255);
 	ofSetColor(20,20,20, 255);
 	ofDrawBitmapString("PRESS P to play back the current slot from 0...",20,20);
-	ofDrawBitmapString("PRESS O to start/stop playback...",20,40);
-	ofDrawBitmapString("PRESS SPACE to start/pause recording to the end of the current slot...",20,60);
-	ofDrawBitmapString("PRESS S to save current slot as in a file...",20,80);
-	ofDrawBitmapString("PRESS C to clear current slot...",20,100);
-	ofDrawBitmapString("PRESS 0-9 to select new slot and load sample if there were any saved...",20,120);
-	ofDrawBitmapString("SLOT: "+ofToString(currentSlot),20,140);
+    ofDrawBitmapString("PRESS O to start/stop playback...",620,20);
+	ofDrawBitmapString("PRESS SPACE to start/pause recording to the end of the current slot...",20,40);
+	ofDrawBitmapString("PRESS S to save current slot as in a file...",620,40);
+	ofDrawBitmapString("PRESS C to clear current slot...",20,60);
+	ofDrawBitmapString("PRESS 0-9 to select new slot and load sample if there were any saved...",620,60);
+	ofDrawBitmapString("SLOT: "+ofToString(currentSlot),20,80);
     
-	waveObject->drawOverviewBuffer(15,655);
+	waveObject->drawOverviewBuffer(15,860);
     
-    float gw = (float)ofGetWidth();
-    float gwDiv = (gw-30)/waveObject->getBufferLengthSmplsf();
-    float pos = (playPosition * gwDiv) * 4;
-    int offset = (int)(((gw * 0.5) - pos));
-    
-    waveObject->drawWaveBuffer(offset, 250);
-    oscObject->drawOSCBuffer(offset, 250);
-
-    if (isPlaying) {
-        ofSetColor(100, 100);
-        ofRect(ofGetWidth() * 0.5, 250, 5, 400);
-        float playDiv = ((float)ofGetWidth()-30) / (float)waveObject->getBufferLengthSmpls();
-        ofRect((playPosition * playDiv) + 15, 655, 3, 75);
+    if (view == 0) {
+        float gw = (float)ofGetWidth();
+        float gwDiv = (gw-30)/waveObject->getBufferLengthSmplsf();
+        float pos = (playPosition * gwDiv) * 4;
+        int offset = (int)(((gw * 0.5) - pos));
+        // waveObject->drawWaveMesh(offset, 150);
+        // waveObject->drawWaveBuffer(offset, 150);
+        oscObject->drawOSCBuffer(offset, 95);
+        ofSetColor(100, 90);
+        ofRect(ofGetWidth() * 0.5, 95, 3, 750);
     }
-    
-    ofSetColor(255,255,255,255);
 
+    ofSetColor(100, 100);
+    float playDiv = ((float)ofGetWidth()-30) / (float)waveObject->getBufferLengthSmpls();
+    ofRect((playPosition * playDiv) + 15, 860, 3, 75);
+    
 	if(isRecording){
 		ofSetCircleResolution(50);
 		ofSetColor(255,0,0);
 		ofCircle(ofGetWidth()/2,455,30);
+        ofDrawBitmapString(ofToString(waveObject->getBufferLengthSec()),ofGetWidth() * 0.5, 515);
 	}
+    
+    ofSetColor(255,255,255,255);
 
+    ofRect(0, 0, 15, ofGetHeight());
+    ofRect(ofGetWidth()-15, 0, 15, ofGetHeight());
 }
 
-//void ofApp::loadSettings() {
-//    ofxXmlSettings configXml;
-//    
-//    if ( configXml.loadFile("settings.xml") ) {
-//        cout << "Loaded settings.xml" << endl;
-//    } else {
-//        cout << "Could not load settings.xml" << endl;
-//    }
-//    
-//    config.audio_in = configXml.getValue( "AUDIO::IN", 0 );
-//    config.osc_port = configXml.getValue( "OSC::PORT", 7000 );
-//    
-//}
+void ofApp::loadSettings() {
+    ofxXmlSettings configXml;
+    
+    if ( configXml.loadFile("appConfig.xml") ) {
+        cout << "Loaded appConfig.xml" << endl;
+    } else {
+        cout << "Could not load appConfig.xml" << endl;
+    }
+    
+    config.audio_in = configXml.getValue( "AUDIO::IN", 0 );
+    config.osc_port = configXml.getValue( "OSC::PORT", 7000 );
+    
+}
 
 void ofApp::audioIn(float* input, int bufferSize, int nChannels){
 	if(isRecording) {
@@ -116,7 +123,12 @@ void ofApp::keyPressed(int key){
 		if(isRecording) {
 			cout<<"Stop recording...\n";
 			isRecording = false;
-            waveObject->updateWaveBuffer(0, waveObject->getBufferLengthSmpls());
+
+            int fboWidth = (int)(waveObject->getBufferLengthSmpls() * 0.5);
+            waveObject->updateFBOSize(fboWidth, 750);
+            oscObject->updateFBOSize(fboWidth, 750);
+            // waveObject->updateWaveBuffer(0, waveObject->getBufferLengthSmpls());
+            // waveObject->updateWaveMesh(0, 0, waveObject->getBufferLengthSmpls());
             waveObject->updateOverviewBuffer();
             oscObject->updateOSCBuffer();
 		}
@@ -135,7 +147,15 @@ void ofApp::keyPressed(int key){
 		string dataNameToLoad="0"+ofToString(currentSlot)+string(".txt");
 		waveObject->loadBuffer(fileNameToLoad);
 		oscObject->loadBuffer(dataNameToLoad);
+        
+        if (waveObject->getBufferLengthSmpls() > 0) {
+            int fboWidth = (int)(waveObject->getBufferLengthSmpls() * 1);
+            // waveObject->updateFBOSize(fboWidth, 750);
+            oscObject->updateFBOSize(fboWidth, 750);
+        }
+
         waveObject->updateWaveBuffer(0, waveObject->getBufferLengthSmpls());
+        //waveObject->updateWaveMesh(0, 0, waveObject->getBufferLengthSmpls());
         waveObject->updateOverviewBuffer();
         oscObject->updateOSCBuffer();
         playPosition = 0;
@@ -158,6 +178,15 @@ void ofApp::keyPressed(int key){
             isPlaying = true;
         }
 	}
+    if (key=='q') {
+        view = 0;
+    }
+    if (key=='w') {
+        view = 1;
+    }
+    if (key=='l') {
+        isLive = !isLive;
+    }
 
 }
 
@@ -173,7 +202,14 @@ void ofApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-
+    if (y >= 860 && x >= 15 && x <= ofGetWidth()-15) {
+        float mult = waveObject->getBufferLengthSmpls() / (ofGetWidth()-30);
+        int pos = (int)((x-15) * mult);
+        if (pos >= waveObject->getBufferLengthSmpls()-1) {
+            pos = waveObject->getBufferLengthSmpls()-1;
+        }
+        playPosition = pos;
+    }
 }
 
 //--------------------------------------------------------------
@@ -183,13 +219,14 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-    float mult = waveObject->getBufferLengthSmpls() / (ofGetWidth()-30);
-    int pos = (int)((x-15) * mult);
-    if (pos >= waveObject->getBufferLengthSmpls()-1) {
-        pos = waveObject->getBufferLengthSmpls()-1;
+    if (y >= 860 && x >= 15 && x <= ofGetWidth()-15) {
+        float mult = waveObject->getBufferLengthSmpls() / (ofGetWidth()-30);
+        int pos = (int)((x-15) * mult);
+        if (pos >= waveObject->getBufferLengthSmpls()-1) {
+            pos = waveObject->getBufferLengthSmpls()-1;
+        }
+        playPosition = pos;
     }
-    playPosition = pos;
-
 }
 
 //--------------------------------------------------------------

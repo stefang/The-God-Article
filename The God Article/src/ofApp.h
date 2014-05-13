@@ -16,8 +16,8 @@ class ofApp : public ofBaseApp{
 	public:
     
     struct AppConfig {
-        string audio_in;
-        string osc_port;
+        int audio_in;
+        int osc_port;
     };
 
     
@@ -41,7 +41,9 @@ class ofApp : public ofBaseApp{
         AppConfig               config;
     
         int	currentSlot, playPosition;
-        bool isRecording, isPlaying, isListening;
+        bool isRecording, isPlaying, isListening, isLive;
+    
+        int view;
     
         // Audio
         void audioIn (float * input, int bufferSize, int nChannels);

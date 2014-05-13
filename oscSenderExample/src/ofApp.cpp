@@ -16,79 +16,79 @@ void ofApp::update(){
     int i = 0;
     ofxOscMessage a;
     a.setAddress("/amp");
-    a.addFloatArg(sin(((i+1) * 0.02) * (float)ofGetFrameNum()));
+    a.addFloatArg(((sin(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
     sender.sendMessage(a);
     
     i++;
     ofxOscMessage b;
     b.setAddress("/freq");
-    b.addFloatArg(sin(((i+1) * 0.02) * (float)ofGetFrameNum()));
+    b.addFloatArg(((cos(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
     sender.sendMessage(b);
     
     i++;
     ofxOscMessage c;
     c.setAddress("/specCentroid");
-    c.addFloatArg(sin(((i+1) * 0.02) * (float)ofGetFrameNum()));
+    c.addFloatArg(((sin(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
     sender.sendMessage(c);
     
     i++;
     ofxOscMessage d;
     d.setAddress("/specFlatness");
-    d.addFloatArg(sin(((i+1) * 0.02) * (float)ofGetFrameNum()));
+    d.addFloatArg(((cos(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
     sender.sendMessage(d);
 
     i++;
     ofxOscMessage n;
     n.setAddress("/loudness");
-    n.addFloatArg(sin(((i+1) * 0.02) * (float)ofGetFrameNum()));
+    n.addFloatArg(((sin(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
     sender.sendMessage(n);
 
     i++;
     ofxOscMessage e;
     e.setAddress("/Arduino/Hole1");
-    e.addFloatArg(sin(((i+1) * 0.02) * (float)ofGetFrameNum()));
+    e.addFloatArg(((cos(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
     sender.sendMessage(e);
 
     i++;
     ofxOscMessage f;
     f.setAddress("/Arduino/Hole2");
-    f.addFloatArg(sin(((i+1) * 0.02) * (float)ofGetFrameNum()));
+    f.addFloatArg(((sin(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
     sender.sendMessage(f);
 
     i++;
     ofxOscMessage g;
     g.setAddress("/Arduino/Hole3");
-    g.addFloatArg(sin(((i+1) * 0.02) * (float)ofGetFrameNum()));
+    g.addFloatArg(((cos(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
     sender.sendMessage(g);
 
     i++;
     ofxOscMessage h;
     h.setAddress("/Arduino/Hole4");
-    h.addFloatArg(sin(((i+1) * 0.02) * (float)ofGetFrameNum()));
+    h.addFloatArg(((sin(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
     sender.sendMessage(h);
 
     i++;
     ofxOscMessage j;
     j.setAddress("/Arduino/Hole5");
-    j.addFloatArg(sin(((i+1) * 0.02) * (float)ofGetFrameNum()));
+    j.addFloatArg(((cos(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
     sender.sendMessage(j);
 
     i++;
     ofxOscMessage k;
     k.setAddress("/Arduino/Hole6");
-    k.addFloatArg(sin(((i+1) * 0.02) * (float)ofGetFrameNum()));
+    k.addFloatArg(((sin(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
     sender.sendMessage(k);
 
     i++;
     ofxOscMessage l;
     l.setAddress("/Arduino/Hole7");
-    l.addFloatArg(sin(((i+1) * 0.02) * (float)ofGetFrameNum()));
+    l.addFloatArg(((cos(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
     sender.sendMessage(l);
 
     i++;
     ofxOscMessage m;
     m.setAddress("/Arduino/Pressure");
-    m.addFloatArg(sin(((i+1) * 0.02) * (float)ofGetFrameNum()));
+    m.addFloatArg(((sin(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
     sender.sendMessage(m);
 
 }
