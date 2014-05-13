@@ -33,7 +33,7 @@ class oscHandler
     
     int currentSlot;
     
-    int width, height;
+    int width, height, speed;
     
     ofxOscReceiver* receiver;
     vector<float> values;

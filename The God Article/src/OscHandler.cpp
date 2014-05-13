@@ -16,6 +16,7 @@ oscHandler::oscHandler(ofxOscReceiver* rec, int w, int h) {
         values.push_back(0.0f);
         adjustments.push_back(1.0f);
     }
+    speed = 1;
 }
 
 oscHandler::~oscHandler() {
@@ -147,6 +148,8 @@ void oscHandler::drawOSCBuffer(int x, int y) {
 }
 
 void oscHandler::updateMeshes() {
+    
+    width = buffer.size() * speed;
     
     float step = (float)width / (float)buffer.size();
     float wHeight = height * 0.1;

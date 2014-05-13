@@ -18,7 +18,7 @@ void ofApp::setup(){
     waveObject = new ofxWaveHandler(&soundStream, WAVEBUFFER_MINSEC, (ofGetWidth()-30) * 4, 695, ofGetWidth()-30, 75);
 
     receiver.setup(config.osc_port);
-    oscObject = new oscHandler(&receiver, (ofGetWidth()-30) * 64, 750);
+    oscObject = new oscHandler(&receiver, (ofGetWidth()-30) * 32, 750);
     
     ofEnableAlphaBlending();
 }
@@ -48,8 +48,8 @@ void ofApp::draw(){
     
     if (view == 0) {
         float gw = (float)ofGetWidth();
-        float gwDiv = (gw-30)/waveObject->getBufferLengthSmplsf();
-        float pos = (playPosition * gwDiv) * 64;
+        float gwDiv = oscObject->width / waveObject->getBufferLengthSmplsf();
+        float pos = (playPosition * gwDiv);
         int offset = (int)(((gw * 0.5) - pos));
         oscObject->drawOSCBuffer(offset, 95);
         ofSetColor(100, 90);
