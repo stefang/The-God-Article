@@ -125,8 +125,6 @@ void ofApp::keyPressed(int key){
 			isRecording = false;
 
             int fboWidth = (int)(waveObject->getBufferLengthSmpls() * 0.5);
-            waveObject->updateFBOSize(fboWidth, 750);
-            oscObject->updateFBOSize(fboWidth, 750);
             // waveObject->updateWaveBuffer(0, waveObject->getBufferLengthSmpls());
             // waveObject->updateWaveMesh(0, 0, waveObject->getBufferLengthSmpls());
             waveObject->updateOverviewBuffer();
