@@ -18,7 +18,7 @@ void ofApp::setup(){
     waveObject = new ofxWaveHandler(&soundStream, WAVEBUFFER_MINSEC, (ofGetWidth()-30) * 4, 695, ofGetWidth()-30, 75);
 
     receiver.setup(config.osc_port);
-    oscObject = new oscHandler(&receiver, (ofGetWidth()-30) * 4, 750);
+    oscObject = new oscHandler(&receiver, (ofGetWidth()-30) * 64, 750);
     
     ofEnableAlphaBlending();
 }
@@ -30,16 +30,6 @@ void ofApp::update(){
     }
     oscObject->update(isRecording);
     ofSetWindowTitle(ofToString(ofGetFrameRate(), 0));
-}
-
-//--------------------------------------------------------------
-void ofApp::resetObjects() {
-//    delete oscObject;
-//    if (waveObject->getBufferLengthSmpls() > 0) {
-//        int fboWidth = (int)(waveObject->getBufferLengthSmpls() * 1);
-//        cout <<  fboWidth << endl;
-//        oscObject = new oscHandler(&receiver, 1500, 750);
-//    }
 }
 
 //--------------------------------------------------------------
@@ -59,7 +49,7 @@ void ofApp::draw(){
     if (view == 0) {
         float gw = (float)ofGetWidth();
         float gwDiv = (gw-30)/waveObject->getBufferLengthSmplsf();
-        float pos = (playPosition * gwDiv) * 4;
+        float pos = (playPosition * gwDiv) * 64;
         int offset = (int)(((gw * 0.5) - pos));
         // waveObject->drawWaveMesh(offset, 150);
         // waveObject->drawWaveBuffer(offset, 150);
@@ -131,19 +121,14 @@ void ofApp::keyPressed(int key){
 		if(isRecording) {
 			cout<<"Stop recording...\n";
 			isRecording = false;
-
-            int fboWidth = (int)(waveObject->getBufferLengthSmpls() * 0.5);
-            // waveObject->updateWaveBuffer(0, waveObject->getBufferLengthSmpls());
-            // waveObject->updateWaveMesh(0, 0, waveObject->getBufferLengthSmpls());
             waveObject->updateOverviewBuffer();
-            oscObject->updateOSCBuffer();
+            oscObject->updateMeshes();
 		}
 		else {
 			cout<<"Start recording...\n";
 			isRecording = true;
             isPlaying = false;
 		}
-        
 	}
 	if (key>='0' && key <= '9') {
         isRecording = false;
@@ -151,15 +136,10 @@ void ofApp::keyPressed(int key){
 		currentSlot = key-'0';
 		string fileNameToLoad="0"+ofToString(currentSlot)+string(".wav");
 		string dataNameToLoad="0"+ofToString(currentSlot)+string(".txt");
-        resetObjects();
 		waveObject->loadBuffer(fileNameToLoad);
-		oscObject->loadBuffer(dataNameToLoad);
-        
-
-        waveObject->updateWaveBuffer(0, waveObject->getBufferLengthSmpls());
-        //waveObject->updateWaveMesh(0, 0, waveObject->getBufferLengthSmpls());
         waveObject->updateOverviewBuffer();
-        oscObject->updateOSCBuffer();
+		oscObject->loadBuffer(dataNameToLoad);
+        oscObject->updateMeshes();
         playPosition = 0;
 	}
 	if (key=='c') {
@@ -168,7 +148,7 @@ void ofApp::keyPressed(int key){
 	}
 	if (key=='p') {
         if(!isRecording) {
-            oscObject->updateOSCBuffer();
+            oscObject->updateMeshes();
             playPosition = 0;
             isPlaying = true;
         }

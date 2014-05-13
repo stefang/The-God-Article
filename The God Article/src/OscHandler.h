@@ -22,18 +22,17 @@ class oscHandler
     
     void update(bool record);
     void setSlot(int slot);
+
+    void updateMeshes();
     void drawOSCBuffer(int x = 0, int y = 0);
-    void updateOSCBuffer();
 
     void clearBuffer();
     int loadBuffer(string fileName);
     int saveBuffer(string fileName);
     
-    void updateMeshes();
     
     int currentSlot;
     
-    ofFbo oscDisplay;
     int width, height;
     
     ofxOscReceiver* receiver;
