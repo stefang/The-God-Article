@@ -49,7 +49,13 @@ void ofApp::draw(){
     if (view == 0) {
         float gw = (float)ofGetWidth();
         float gwDiv = oscObject->width / waveObject->getBufferLengthSmplsf();
-        float pos = (playPosition * gwDiv);
+        float pos;
+        if(isRecording){
+            pos = (waveObject->getBufferLengthSmplsf() * gwDiv);
+        }
+        if(isPlaying){
+            pos = (playPosition * gwDiv);
+        }
         int offset = (int)(((gw * 0.5) - pos));
         oscObject->drawOSCBuffer(offset, 95);
         ofSetColor(100, 90);
