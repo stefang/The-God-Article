@@ -39,8 +39,10 @@ class oscHandler
     
     ofxOscReceiver* receiver;
     vector<float> values;
+    vector<float> fft;
     vector<float> adjustments;
     vector< vector<float> > buffer;
+    vector< vector<float> > fftbuffer;
     
     ofMesh ampFreq, breath;
     vector<ofMesh> fingers;

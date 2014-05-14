@@ -69,6 +69,12 @@ void oscHandler::update(bool record) {
         if(m.getAddress() == "/Arduino/Pressure"){
             values[12] = m.getArgAsFloat(0);
         }
+        if(m.getAddress() == "/fft"){
+            fft.clear();
+            for (int i = 0; i < m.getNumArgs(); i++) {
+                fft.push_back(m.getArgAsFloat(i));
+            }
+        }
         if(m.getAddress() == "/scale/1"){
             adjustments[0] = m.getArgAsFloat(0);
         }
@@ -114,8 +120,8 @@ void oscHandler::update(bool record) {
     }
     
     if (record) {
-        buffer.push_back(values);
-
+        buffer.push_back(fft);
+        fftbuffer.push_back(values);
     }
     updateMeshes();
 }
@@ -311,11 +317,13 @@ void oscHandler::setSlot(int slot) {
 
 void oscHandler::clearBuffer() {
     buffer.clear();
+    fftbuffer.clear();
     updateMeshes();
 }
 
 int oscHandler::loadBuffer(string fileName) {
     buffer.clear();
+    fftbuffer.clear();
     string fileContents = ofBufferFromFile(ofToDataPath(fileName));
     vector<string> lines = ofSplitString(fileContents, "\n");
     for (int l = 0; l < lines.size(); l++) {
@@ -341,5 +349,21 @@ int oscHandler::saveBuffer(string fileName){
         newFile << endl;
     }
     newFile.close();
+    
+    ofStringReplace(fileName, ".txt", "-fft.txt");
+    
+    ofFile fftFile(ofToDataPath(fileName), ofFile::WriteOnly);
+    fftFile.create();
+    for (int h = 0; h < fftbuffer.size(); h++) {
+        for (int i = 0; i < fft.size(); i++) {
+            fftFile << fftbuffer[h][i];
+            if (i < fft.size()-1 ) {
+                fftFile << ",";
+            }
+        }
+        fftFile << endl;
+    }
+    fftFile.close();
+    
 }
 

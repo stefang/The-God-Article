@@ -90,6 +90,14 @@ void ofApp::update(){
     m.setAddress("/Arduino/Pressure");
     m.addFloatArg(((sin(((i+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
     sender.sendMessage(m);
+    
+    i++;
+    ofxOscMessage fft;
+    fft.setAddress("/fft");
+    for (int fftindex = 0; fftindex < 512; fftindex++) {
+        fft.addFloatArg(((sin(((fftindex+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
+    }
+    sender.sendMessage(fft);
 
 }
 
