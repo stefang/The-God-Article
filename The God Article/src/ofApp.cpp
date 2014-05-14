@@ -53,10 +53,10 @@ void ofApp::draw(){
         float gw = (float)ofGetWidth();
         float gwDiv = oscObject->width / waveObject->getBufferLengthSmplsf();
         float pos;
+        pos = (playPosition * gwDiv);
         if(isRecording){
             pos = (waveObject->getBufferLengthSmplsf() * gwDiv);
         }
-        pos = (playPosition * gwDiv);
         int offset = (int)(((gw * 0.5) - pos));
         oscObject->drawOSCBuffer(offset, 95);
         ofSetColor(100, 90);
