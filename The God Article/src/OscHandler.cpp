@@ -186,7 +186,7 @@ void oscHandler::drawOSCBuffer(int x, int y) {
 void oscHandler::drawCircularBuffer(int x, int y, int pos) {
     ofPushMatrix();
     ofTranslate(x, y);
-    if (buffer.size() > 0 && pos < buffer.size()) {
+    if (buffer.size() > 0 && pos < buffer.size()-1) {
         ofSetColor(234,234,205);
         ofRect(0, 0, width, height);
         ofSetColor(255, 255, 255, 200);
