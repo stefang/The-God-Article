@@ -36,6 +36,8 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
     
+        void updateVisCount();
+    
         void loadSettings();
     
         AppConfig               config;
@@ -44,6 +46,8 @@ class ofApp : public ofBaseApp{
         bool isRecording, isPlaying, isListening, isLive;
     
         int view;
+        ofTrueTypeFont font;
+        float singleHeight;
     
         // Audio
         void audioIn (float * input, int bufferSize, int nChannels);
@@ -55,5 +59,9 @@ class ofApp : public ofBaseApp{
         //OSC
         ofxOscReceiver receiver;
         oscHandler* oscObject;
+    
+        float meshScale;
+    
+        bool bWaveform, bFreq, bAmp, bBreath, bFingers;
 
 };

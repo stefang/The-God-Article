@@ -4,3 +4,9 @@
 <OSC>
   <PORT>12345</PORT>
 </OSC>
+<VIS>
+    <WAVEFORM>0</WAVEFORM>
+    <FREQ>1</FREQ>
+    <BREATH>0</BREATH>
+    <FINGERS>1</FINGERS>
+</VIS>

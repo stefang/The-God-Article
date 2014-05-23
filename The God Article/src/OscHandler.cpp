@@ -16,9 +16,18 @@ oscHandler::oscHandler(ofxOscReceiver* rec, int w, int h) {
         values.push_back(0.0f);
         adjustments.push_back(1.0f);
     }
+    
+    for (int i = 0; i < 512; i++) {
+        fft.push_back(0.0f);
+    }
+
     adjustments.push_back(0.25f);
-    speed = 4;
+    meshScale = 1;
     ofSetCircleResolution(40);
+    
+    singleHeight = 50;
+    
+    spectrogram.allocate(w, h, OF_IMAGE_COLOR);
 }
 
 oscHandler::~oscHandler() {
@@ -30,6 +39,7 @@ void oscHandler::update(bool record) {
     while(receiver->hasWaitingMessages()){
         ofxOscMessage m;
         receiver->getNextMessage(&m);
+        // cout << m.getAddress() << endl;
         if(m.getAddress() == "/amp"){
             values[0] = m.getArgAsFloat(0);
         }
@@ -69,7 +79,7 @@ void oscHandler::update(bool record) {
         if(m.getAddress() == "/Arduino/Pressure"){
             values[12] = m.getArgAsFloat(0);
         }
-        if(m.getAddress() == "/fft"){
+        if(m.getAddress() == "/fftData"){
             fft.clear();
             for (int i = 0; i < m.getNumArgs(); i++) {
                 fft.push_back(m.getArgAsFloat(i));
@@ -114,79 +124,95 @@ void oscHandler::update(bool record) {
         if(m.getAddress() == "/scale/13"){
             adjustments[12] = m.getArgAsFloat(0);
         }
-        if(m.getAddress() == "/scale/14"){
+        if(m.getAddress() == "/scale/14"){ // Sets waveform and mesh width...
             adjustments[13] = m.getArgAsFloat(0);
         }
     }
-    
     if (record) {
-        buffer.push_back(fft);
-        fftbuffer.push_back(values);
+        buffer.push_back(values);
+        fftbuffer.push_back(fft);
     }
     updateMeshes();
 }
 
 void oscHandler::drawOSCLive(int x, int y) {
-    float wHeight = height * 0.1;
-    ofPushMatrix();
-    ofTranslate(x, y);
-    ofPushMatrix();
-    ofTranslate(0, height * 0.3);
-    ofSetColor(254, 100, 100, 100);
-    ofRect(-7, wHeight * values[1] , 17, values[12] * wHeight);
-    ofPopMatrix();
-    ofPushMatrix();
-    ofTranslate(0, (height * 0.75)+15);
-    ofRect(-7, -(values[4] * (wHeight*2)) , 17, values[4] * (wHeight * 4));
-    ofPopMatrix();
-    ofPushMatrix();
-    ofTranslate(0, (height * 0.55));
-    for (int i = 0; i < 7; i++) {
-        ofSetColor(0,0,157,(values[5+i] * 200));
-        ofRect(-7, 0, 17, 30);
-        if (i == 0 || i == 3) {
-            ofTranslate(0, 60);
-        } else {
-            ofTranslate(0, 40);
-        }
-    }
-    ofPopMatrix();
-    ofPopMatrix();
+//    float wHeight = height * 0.1;
+//    ofPushMatrix();
+//    ofTranslate(x, y);
+//    ofPushMatrix();
+//    ofTranslate(0, height * 0.3);
+//    ofSetColor(254, 100, 100, 100);
+//    ofRect(-7, wHeight * values[1] , 17, values[12] * wHeight);
+//    ofPopMatrix();
+//    ofPushMatrix();
+//    ofTranslate(0, (height * 0.75)+15);
+//    ofRect(-7, -(values[4] * (wHeight*2)) , 17, values[4] * (wHeight * 4));
+//    ofPopMatrix();
+//    ofPushMatrix();
+//    ofTranslate(0, (height * 0.55));
+//    for (int i = 0; i < 7; i++) {
+//        ofSetColor(0,0,157,(values[5+i] * 200));
+//        ofRect(-7, 0, 17, 30);
+//        if (i == 0 || i == 3) {
+//            ofTranslate(0, 60);
+//        } else {
+//            ofTranslate(0, 40);
+//        }
+//    }
+//    ofPopMatrix();
+//    ofPopMatrix();
 };
 
 void oscHandler::drawOSCBuffer(int x, int y) {
-    if (buffer.size() > 0) {
-        ofPushMatrix();
-        ofTranslate(x, y);
-        ofSetColor(254, 253, 245,255);
-        ofRect(0, 0, width, height*0.5);
-        ofSetColor(249,249,249,255);
-        ofRect(0, height*0.5 + 15, width, height*0.5 - 15);
-        
-        ofSetColor(0,0,0,50);
-        
-        ofPushMatrix();
-        ofTranslate(0, height * 0.3);
-        ampFreq.draw();
-        ofPopMatrix();
-        ofPushMatrix();
-        ofTranslate(0, (height * 0.75)+15);
-        breath.draw();
-        ofPopMatrix();
-        
-        ofPushMatrix();
-        ofTranslate(0, (height * 0.55)+15);
-        for (int i = 0; i < 7; i++) {
-            fingers[i].draw();
-            if (i == 0 || i == 3) {
-                ofTranslate(0, 60);
-            } else {
-                ofTranslate(0, 40);
-            }
+//    if (buffer.size() > 0) {
+//        ofPushMatrix();
+//        ofTranslate(x, y);
+//        ofSetColor(0, 0, 0, 50);
+////        ofRect(0, 0, width, height);
+//        ofSetColor(249,249,249,255);
+////        ofRect(0, height*0.5 + 15, width, height*0.5 - 15);
+//        
+//        ofSetColor(0,0,0,50);
+//        
+//        ofPushMatrix();
+//        ofTranslate(0, height * 0.3);
+//        amp.draw();
+//        freq.draw();
+//        ofPopMatrix();
+//        ofPushMatrix();
+//        ofTranslate(0, (height * 0.75)+15);
+//        breath.draw();
+//        ofPopMatrix();
+//        
+//        ofPushMatrix();
+//        ofTranslate(0, (height * 0.55)+15);
+//        for (int i = 0; i < 7; i++) {
+//            fingers[i].draw();
+//            if (i == 0 || i == 3) {
+//                ofTranslate(0, 60);
+//            } else {
+//                ofTranslate(0, 40);
+//            }
+//        }
+//        ofPopMatrix();
+//        ofPopMatrix();
+//    }
+}
+
+void oscHandler::drawFingers() {
+    ofPushMatrix();
+    ofSetColor(0, 0, 0, 100);
+    ofRect(0, 0, width, singleHeight);
+    float step = (singleHeight / fingers.size());
+    for (int i = 0; i < fingers.size(); i++) {
+        fingers[i].draw();
+        if (i == 0 || i == 3) {
+            ofTranslate(0, step);
+        } else {
+            ofTranslate(0, step);
         }
-        ofPopMatrix();
-        ofPopMatrix();
     }
+    ofPopMatrix();
 }
 
 void oscHandler::drawCircularBuffer(int x, int y, int pos) {
@@ -248,67 +274,112 @@ void oscHandler::drawCircularLive(int x, int y) {
     ofPopMatrix();
 };
 
+void oscHandler::updateFFT() {
+    if (fftbuffer.size() > 0) {
+        spectrogram.resize(fftbuffer.size(), 512);
+        for (int h = 0; h < fftbuffer.size(); h++) {
+            for (int o = 0; o < 512; o++) {
+                ofColor c;
+                float v = fftbuffer[h][o];
+                
+                c = ofColor(fftbuffer[h][o]*155, fftbuffer[h][o]*155, fftbuffer[h][o]*155);
+                
+                spectrogram.setColor(h, o, c);
+            }
+        }
+        spectrogram.resize(width, singleHeight);
+        spectrogram.update();
+    }
+
+}
 
 void oscHandler::updateMeshes() {
     
     if (buffer.size() > 0) {
-        width = buffer.size() * (speed * adjustments[13]);
-        
+        width = buffer.size() * meshScale;
         float step = (float)width / (float)buffer.size();
-        float wHeight = height * 0.1;
         
-        ampFreq.clear();
-        ampFreq.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
-        ampFreq.setupIndicesAuto();
+//        amp.clear();
+//        amp.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+//        amp.setupIndicesAuto();
+//        
+//        for (int h = 0; h < buffer.size()-1; h++) {
+//            amp.addColor(ofColor(131,163,68,255));
+//            amp.addVertex(ofPoint(ofPoint(h*step, singleHeight * ((buffer[h][12] * adjustments[12])), 0)));
+//            amp.addColor(ofColor(131,163,68,255));
+//            amp.addVertex(ofPoint(ofPoint(h*step, singleHeight * (-(buffer[h][12] * adjustments[12])), 0)));
+//            amp.addColor(ofColor(131,163,68,255));
+//            amp.addVertex(ofPoint(ofPoint((h+1)*step, singleHeight * ((buffer[h+1][12] * adjustments[12])), 0)));
+//            amp.addColor(ofColor(131,163,68,255));
+//            amp.addVertex(ofPoint(ofPoint((h)*step, singleHeight * (-(buffer[h][12] * adjustments[12])), 0)));
+//        }
+        
+        freq.clear();
         
         for (int h = 0; h < buffer.size()-1; h++) {
-            ampFreq.addColor(ofColor(131,163,68,255));
-            ampFreq.addVertex(ofPoint(ofPoint(h*step, ((buffer[h][1] * adjustments[1]) * wHeight)+((buffer[h][12] * adjustments[12]) * wHeight), 0)));
-            ampFreq.addColor(ofColor(131,163,68,255));
-            ampFreq.addVertex(ofPoint(ofPoint(h*step, (((buffer[h][1] * adjustments[1]) * wHeight))+(-(buffer[h][12] * adjustments[12]) * wHeight), 0)));
-            ampFreq.addColor(ofColor(131,163,68,255));
-            ampFreq.addVertex(ofPoint(ofPoint((h+1)*step, ((buffer[h+1][1] * adjustments[1]) * wHeight)+((buffer[h+1][12] * adjustments[12]) * wHeight), 0)));
-            ampFreq.addColor(ofColor(131,163,68,255));
-            ampFreq.addVertex(ofPoint(ofPoint((h)*step, ((buffer[h][1] * adjustments[1])*wHeight)+(-(buffer[h][12] * adjustments[12]) * wHeight), 0)));
+            float cval = abs(buffer[h][1]);
+            cval = cval * adjustments[1];
+            if (cval > 1) {
+                cval = 1;
+            }
+            freq.addVertex(ofPoint(ofPoint(h*step, singleHeight * ((cval)), 0)));
         }
-        
-        wHeight = height * 0.2;
         
         breath.clear();
         breath.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
         breath.setupIndicesAuto();
         
         for (int h = 0; h < buffer.size()-1; h++) {
-            breath.addColor(ofColor(240,224,171,255));
-            breath.addVertex(ofPoint(ofPoint(h*step, (-buffer[h][4] * wHeight), 0)));
-            breath.addColor(ofColor(240,224,171,255));
-            breath.addVertex(ofPoint(ofPoint(h*step, (buffer[h][4] * wHeight), 0)));
-            breath.addColor(ofColor(240,224,171,255));
-            breath.addVertex(ofPoint(ofPoint((h+1)*step, (buffer[h+1][4] * wHeight), 0)));
-            breath.addColor(ofColor(240,224,171,255));
-            breath.addVertex(ofPoint(ofPoint((h)*step, (-buffer[h][4] * wHeight), 0)));
+            
+            float cval = abs(buffer[h][4]);
+            float nval = abs(buffer[h+1][4]);
+            ofColor c = ofColor(240,224,171,255);
+            
+            cval = cval * adjustments[4];
+            nval = nval * adjustments[4];
+            
+            if (cval > 1) {
+                cval = 1;
+//                c = ofColor(255,0,0,200);
+            }
+            if (nval > 1) {
+                nval = 1;
+//                c = ofColor(255,0,0,200);
+            };
+            
+            breath.addColor(c);
+            breath.addVertex(ofPoint(ofPoint(h*step, (singleHeight * 0.5) + ((singleHeight * 0.5) * (-cval)), 0)));
+            breath.addColor(c);
+            breath.addVertex(ofPoint(ofPoint(h*step, (singleHeight * 0.5) + ((singleHeight * 0.5) * (cval)), 0)));
+            breath.addColor(c);
+            breath.addVertex(ofPoint(ofPoint((h+1)*step, (singleHeight * 0.5) + ((singleHeight * 0.5) * (nval)), 0)));
+            breath.addColor(c);
+            breath.addVertex(ofPoint(ofPoint((h)*step, (singleHeight * 0.5) + ((singleHeight * 0.5) * (-cval)), 0)));
         }
         
         fingers.clear();
         for (int i = 0; i < 7; i++) {
             fingers.push_back( ofMesh() );
         }
+        float barWidth = (singleHeight / 7);
         for (int i = 0; i < 7; i++) {
             fingers[i].clear();
             fingers[i].setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
             fingers[i].setupIndicesAuto();
             for (int h = 0; h < buffer.size()-1; h++) {
                 fingers[i].addColor(ofColor(61,86,157,(buffer[h][5+i] * 200)));
-                fingers[i].addVertex(ofPoint(ofPoint(h*step, -15, 0)));
+                fingers[i].addVertex(ofPoint(ofPoint(h*step, 0, 0)));
                 fingers[i].addColor(ofColor(61,86,157,(buffer[h][5+i] * 200)));
-                fingers[i].addVertex(ofPoint(ofPoint(h*step, 15, 0)));
+                fingers[i].addVertex(ofPoint(ofPoint(h*step, barWidth, 0)));
                 fingers[i].addColor(ofColor(61,86,157,(buffer[h+1][5+i] * 200)));
-                fingers[i].addVertex(ofPoint(ofPoint((h+1)*step, 15, 0)));
+                fingers[i].addVertex(ofPoint(ofPoint((h+1)*step, barWidth, 0)));
                 fingers[i].addColor(ofColor(61,86,157,(buffer[h][5+i] * 200)));
-                fingers[i].addVertex(ofPoint(ofPoint((h)*step, -15, 0)));
+                fingers[i].addVertex(ofPoint(ofPoint((h)*step, 0, 0)));
             }
         }
+        
     }
+    
 }
 
 void oscHandler::setSlot(int slot) {
@@ -329,11 +400,25 @@ int oscHandler::loadBuffer(string fileName) {
     for (int l = 0; l < lines.size(); l++) {
         vector<string> vals = ofSplitString(lines[l], ",");
         vector<float> valsf;
-         for (int v = 0; v < vals.size(); v++) {
+        for (int v = 0; v < vals.size(); v++) {
              valsf.push_back(ofToFloat(vals[v]));
-         }
-         buffer.push_back(valsf);
-     }
+        }
+        buffer.push_back(valsf);
+        
+    }
+    
+    ofStringReplace(fileName, ".txt", "-fft.txt");
+    
+    fileContents = ofBufferFromFile(ofToDataPath(fileName));
+    lines = ofSplitString(fileContents, "\n");
+    for (int l = 0; l < lines.size(); l++) {
+        vector<string> vals = ofSplitString(lines[l], ",");
+        vector<float> valsf;
+        for (int v = 0; v < vals.size(); v++) {
+            valsf.push_back(ofToFloat(vals[v]));
+        }
+        fftbuffer.push_back(valsf);
+    }
 }
 
 int oscHandler::saveBuffer(string fileName){

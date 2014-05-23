@@ -8,6 +8,8 @@ void ofApp::setup(){
     for (int i = 0; i < 6; i++) {
         values.push_back(0.0f);
     }
+    
+    ofSetFrameRate(100);
 }
 
 //--------------------------------------------------------------
@@ -93,7 +95,7 @@ void ofApp::update(){
     
     i++;
     ofxOscMessage fft;
-    fft.setAddress("/fft");
+    fft.setAddress("/fftData");
     for (int fftindex = 0; fftindex < 512; fftindex++) {
         fft.addFloatArg(((sin(((fftindex+1) * 0.002) * (float)ofGetFrameNum())) + 1) * 0.5);
     }

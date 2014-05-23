@@ -24,10 +24,12 @@ class oscHandler
     void setSlot(int slot);
 
     void updateMeshes();
+    void updateFFT();
     void drawOSCLive(int x = 0, int y = 0);
     void drawOSCBuffer(int x = 0, int y = 0);
     void drawCircularLive(int x = 0, int y = 0);
     void drawCircularBuffer(int x = 0, int y = 0, int pos = 0);
+    void drawFingers();
 
     void clearBuffer();
     int loadBuffer(string fileName);
@@ -37,6 +39,8 @@ class oscHandler
     
     int width, height, speed;
     
+    float singleHeight;
+    
     ofxOscReceiver* receiver;
     vector<float> values;
     vector<float> fft;
@@ -44,8 +48,14 @@ class oscHandler
     vector< vector<float> > buffer;
     vector< vector<float> > fftbuffer;
     
-    ofMesh ampFreq, breath;
+    ofMesh amp, breath;
+    ofPolyline freq;
+    
+    ofImage spectrogram;
+    
     vector<ofMesh> fingers;
+    
+    float meshScale;
     
 };
 
