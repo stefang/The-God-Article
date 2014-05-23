@@ -26,6 +26,11 @@ class oscHandler
     void updateMeshes();
     void updateFFT();
     void drawOSCLive(int x = 0, int y = 0);
+    
+    void drawFreqLive();
+    void drawBreathLive();
+    void drawFingersLive();
+    
     void drawOSCBuffer(int x = 0, int y = 0);
     void drawCircularLive(int x = 0, int y = 0);
     void drawCircularBuffer(int x = 0, int y = 0, int pos = 0);

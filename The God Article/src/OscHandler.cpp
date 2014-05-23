@@ -28,6 +28,8 @@ oscHandler::oscHandler(ofxOscReceiver* rec, int w, int h) {
     singleHeight = 50;
     
     spectrogram.allocate(w, h, OF_IMAGE_COLOR);
+    
+    loadBuffer("faker");
 }
 
 oscHandler::~oscHandler() {
@@ -135,6 +137,43 @@ void oscHandler::update(bool record) {
     updateMeshes();
 }
 
+void oscHandler::drawFreqLive() {
+    float cval = abs(values[1]);
+    if (cval > 1) {
+        cval = 1;
+    }
+    ofPushMatrix();
+    ofSetColor(255, 255, 255, 255);
+    ofRect(1, cval*singleHeight-2, 5, 5);
+    ofPopMatrix();
+
+}
+void oscHandler::drawBreathLive() {
+    float cval = abs(values[12]);
+    if (cval > 1) {
+        cval = 1;
+    }
+    ofPushMatrix();
+    ofSetColor(255, 255, 255, 255);
+    ofTranslate(0, singleHeight*0.5);
+    ofRect(1, -((cval*singleHeight)*0.5), 5, cval*singleHeight);
+    ofPopMatrix();
+}
+void oscHandler::drawFingersLive() {
+    ofPushMatrix();
+    for (int i = 0; i < fingers.size(); i++) {
+        ofSetColor(255, 255, 255, values[5+i]*255);
+        ofRect(1, 0, 5, singleHeight * 0.10);
+        if (i == 0 || i == 3) {
+            ofTranslate(0, (singleHeight * 0.17)); // Larger Gap
+        } else {
+            ofTranslate(0, (singleHeight * 0.14));
+        }
+    }
+    ofPopMatrix();
+}
+
+
 void oscHandler::drawOSCLive(int x, int y) {
 //    float wHeight = height * 0.1;
 //    ofPushMatrix();
@@ -201,15 +240,16 @@ void oscHandler::drawOSCBuffer(int x, int y) {
 
 void oscHandler::drawFingers() {
     ofPushMatrix();
-    ofSetColor(0, 0, 0, 100);
+    ofSetColor(0, 0, 0, 50);
     ofRect(0, 0, width, singleHeight);
-    float step = (singleHeight / fingers.size());
     for (int i = 0; i < fingers.size(); i++) {
+        ofSetColor(255, 255, 255, 20);
+        ofRect(0, 0, width, singleHeight * 0.10);
         fingers[i].draw();
         if (i == 0 || i == 3) {
-            ofTranslate(0, step);
+            ofTranslate(0, (singleHeight * 0.17)); // Larger Gap
         } else {
-            ofTranslate(0, step);
+            ofTranslate(0, (singleHeight * 0.14));
         }
     }
     ofPopMatrix();
@@ -331,12 +371,12 @@ void oscHandler::updateMeshes() {
         
         for (int h = 0; h < buffer.size()-1; h++) {
             
-            float cval = abs(buffer[h][4]);
-            float nval = abs(buffer[h+1][4]);
+            float cval = abs(buffer[h][12]);
+            float nval = abs(buffer[h+1][12]);
             ofColor c = ofColor(240,224,171,255);
             
-            cval = cval * adjustments[4];
-            nval = nval * adjustments[4];
+            cval = cval * adjustments[12];
+            nval = nval * adjustments[12];
             
             if (cval > 1) {
                 cval = 1;
@@ -361,7 +401,7 @@ void oscHandler::updateMeshes() {
         for (int i = 0; i < 7; i++) {
             fingers.push_back( ofMesh() );
         }
-        float barWidth = (singleHeight / 7);
+        float barWidth = (singleHeight / 10);
         for (int i = 0; i < 7; i++) {
             fingers[i].clear();
             fingers[i].setMode(OF_PRIMITIVE_TRIANGLE_STRIP);

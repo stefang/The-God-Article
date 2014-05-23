@@ -34,6 +34,7 @@ void ofApp::setup(){
     
     font.loadFont("OpenSans-Light.ttf", 10);
     
+    playPosition = 0;
     updateVisCount();
     
 }
@@ -63,35 +64,54 @@ void ofApp::draw(){
         }
         
         int offset = (int)(((gw * 0.5) - pos));
+        ofPushMatrix();
+        ofTranslate(offset, 0);
+        ofTranslate(0, 25);
+        if (bWaveform) {
+            if (!isRecording) {
+                waveObject->drawWaveMesh();
+            }
+            ofTranslate(0, singleHeight + 10);
+        }
+        if (bFreq) {
+            ofSetColor(255,255,255,255);
+            if (!isRecording) {
+                oscObject->spectrogram.draw(0,0);
+            }
+            ofSetLineWidth(2);
+            ofSetColor(255,255,255,150);
+            oscObject->freq.draw();
+            ofTranslate(0, singleHeight + 10);
+        }
+        if (bBreath) {
+            oscObject->breath.draw();
+            ofTranslate(0, singleHeight + 10);
+        }
+        if (bFingers) {
+            oscObject->drawFingers();
+        }
+        ofPopMatrix();
+
+        if (isLive) {
             ofPushMatrix();
-            ofTranslate(offset, 0);
-            ofTranslate(0, 25);
+            ofTranslate(ofGetWidth()*0.5, 25);
             if (bWaveform) {
-                if (!isRecording) {
-                    waveObject->drawWaveMesh();
-                }
-                ofTranslate(0, singleHeight);
+                ofTranslate(0, singleHeight + 10);
             }
             if (bFreq) {
-                oscObject->spectrogram.draw(0,0);
-                ofSetLineWidth(2);
-                oscObject->freq.draw();
-                ofTranslate(0, singleHeight);
+                oscObject->drawFreqLive();
+                ofTranslate(0, singleHeight + 10);
             }
             if (bBreath) {
-                oscObject->breath.draw();
-                ofTranslate(0, singleHeight);
+                oscObject->drawBreathLive();
+                ofTranslate(0, singleHeight + 10);
             }
             if (bFingers) {
-                oscObject->drawFingers();
+                oscObject->drawFingersLive();
             }
             ofPopMatrix();
+        }
         
-//        ofSetColor(222,222,235, 60);
-        
-//        if (isLive) {
-//            oscObject->drawOSCLive(ofGetWidth() * 0.5, 95);
-//        }
         ofSetColor(222,222,235, 60);
         ofRect(ofGetWidth() * 0.5, 15, 1, ofGetHeight() - 240);
     }
@@ -114,8 +134,8 @@ void ofApp::draw(){
 	if(isRecording){
 		ofSetCircleResolution(50);
 		ofSetColor(255,0,0);
-		ofCircle(ofGetWidth()/2,455,30);
-        ofDrawBitmapString(ofToString(waveObject->getBufferLengthSec()),ofGetWidth() * 0.5, 515);
+		ofCircle(ofGetWidth()/2, singleHeight*0.5 ,12);
+        font.drawString(ofToString(waveObject->getBufferLengthSec()),(ofGetWidth()/2) + 20, (singleHeight*0.5) + 5);
 	}
     
     // Overlay edges
@@ -302,7 +322,7 @@ void ofApp::keyPressed(int key){
 }
 
 void ofApp::updateVisCount() {
-    int totalHeight = ofGetHeight()-260;
+    int totalHeight = ofGetHeight()-240;
     int visCount = 0;
     
     if ( bWaveform ) visCount += 1;
@@ -312,9 +332,11 @@ void ofApp::updateVisCount() {
     
     if (visCount > 0) {
         singleHeight = totalHeight / visCount;
+        singleHeight -= 10 + ( 10 / visCount);
     } else {
         singleHeight = totalHeight;
     }
+    
     
     oscObject->singleHeight = singleHeight;
     waveObject->waveFormHeight = singleHeight;
